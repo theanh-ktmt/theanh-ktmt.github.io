@@ -1,12 +1,1 @@
-title: My GitHub Page
-description: >-
-  Welcome to my GitHub Page. Here, I share my projects, research, and more.
-baseurl: "/blogs"
-url: "https://theanh-ktmt.github.io"
-
-remote_theme: "mmistakes/minimal-mistakes@4.26.2"
-
-plugins:
-  - jekyll-include-cache
-
-# Other configuration settings...
+theme: jekyll-theme-minimal
