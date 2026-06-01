@@ -15,7 +15,6 @@
   text-decoration: none !important;
 }
 
-
 /* ── Shared: active nav item ──────────────────────────────── */
 
 .nav-active {
@@ -58,7 +57,9 @@
   background: white;
   box-sizing: border-box;
   outline: none;
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
 }
 
 .blog-search-input:focus {
@@ -96,7 +97,9 @@
   overflow: hidden;
   display: flex;
   flex-direction: row;
-  transition: box-shadow 300ms ease, transform 250ms ease;
+  transition:
+    box-shadow 300ms ease,
+    transform 250ms ease;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -215,7 +218,9 @@
   text-decoration: none;
   padding: 0.4rem 0;
   margin-top: 2rem;
-  transition: color 200ms ease, gap 200ms ease;
+  transition:
+    color 200ms ease,
+    gap 200ms ease;
 }
 
 .blog-post-back:hover {
@@ -372,14 +377,31 @@
 }
 
 /* Syntax highlight tokens */
-.token-keyword  { color: #c678dd; }
-.token-string   { color: #98c379; }
-.token-comment  { color: #636d83; font-style: italic; }
-.token-func     { color: #61afef; }
-.token-number   { color: #d19a66; }
-.token-class    { color: #e5c07b; }
-.token-builtin  { color: #56b6c2; }
-.token-punct    { color: #abb2bf; }
+.token-keyword {
+  color: #c678dd;
+}
+.token-string {
+  color: #98c379;
+}
+.token-comment {
+  color: #636d83;
+  font-style: italic;
+}
+.token-func {
+  color: #61afef;
+}
+.token-number {
+  color: #d19a66;
+}
+.token-class {
+  color: #e5c07b;
+}
+.token-builtin {
+  color: #56b6c2;
+}
+.token-punct {
+  color: #abb2bf;
+}
 
 /* Callout boxes */
 .blog-callout {
@@ -510,7 +532,9 @@
   font-family: "Poppins", sans-serif;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 250ms ease, transform 250ms ease;
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
   z-index: 9999;
   white-space: nowrap;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -563,7 +587,9 @@
   color: rgb(55, 55, 55);
   background: white;
   box-sizing: border-box;
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
   outline: none;
   resize: vertical;
 }

@@ -846,13 +846,23 @@ footer .nav-links {
 }
 
 @keyframes scroll-fwd {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes scroll-rev {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .skill-tag {
@@ -923,7 +933,7 @@ footer .nav-links {
   margin: 0 0 0.75rem;
 }
 
-.carousel-slide > p {
+.carousel-slide>p {
   max-width: 600px;
   font-size: 0.95rem;
   text-align: center;

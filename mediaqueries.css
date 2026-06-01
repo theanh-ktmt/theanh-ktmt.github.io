@@ -4,9 +4,11 @@
     min-height: 90vh;
     margin-bottom: 0;
   }
+
   .about-containers {
     flex-wrap: wrap;
   }
+
   #contact,
   #projects,
   #activities,
@@ -20,15 +22,18 @@
   #desktop-nav {
     display: none;
   }
+
   #hamburger-nav {
     display: flex;
   }
+
   #profile {
     flex-direction: column;
     align-items: center;
     gap: 2rem;
     padding-top: 6vh;
   }
+
   .section__pic-container {
     width: 220px;
     height: 220px;
@@ -36,32 +41,40 @@
     min-height: 220px;
     margin: 0 auto;
   }
+
   .section-container {
     display: block;
   }
+
   section,
   .section-container {
     height: auto;
     min-height: unset;
   }
+
   section {
     padding: 4vh 5% 5rem;
     max-width: 100%;
   }
+
   .arrow {
     display: none;
   }
+
   .about-containers {
     margin-top: 0;
   }
+
   .projects-carousel {
     gap: 0.5rem;
   }
+
   .carousel-btn {
     width: 2.4rem;
     height: 2.4rem;
     font-size: 0.95rem;
   }
+
   nav {
     max-width: 100%;
     padding: 0 5%;
@@ -69,90 +82,114 @@
 }
 
 @media screen and (max-width: 600px) {
+
   #contact,
   footer {
     height: auto;
   }
+
   #profile {
     min-height: unset;
     padding-top: 4vh;
   }
+
   .section__pic-container {
     width: 160px;
     height: 160px;
     min-width: 160px;
     min-height: 160px;
   }
+
   .honors-list {
     grid-template-columns: 1fr;
   }
+
   .honors-controls {
     flex-wrap: wrap;
     gap: 0.5rem;
   }
+
   .honors-list li {
     padding: 0.9rem 1rem;
   }
+
   .intro-text {
     font-size: 0.9rem;
   }
+
   .title {
     font-size: 2rem;
   }
+
   .section__text__p2 {
     font-size: 1.25rem;
   }
+
   .logo {
     font-size: 1.4rem;
   }
+
   .nav-links {
     flex-direction: column;
     gap: 0.5rem;
     text-align: center;
   }
+
   .about-containers,
   .contact-info-upper-container,
   .btn-container {
     flex-wrap: wrap;
   }
+
   .contact-info-container {
     margin: 0;
   }
+
   .contact-info-container p,
   .nav-links li a {
     font-size: 0.95rem;
   }
+
   .experience-sub-title {
     font-size: 1.1rem;
   }
+
   .text-container {
     text-align: left;
   }
+
   .projects-carousel {
     gap: 0.4rem;
   }
+
   .carousel-btn {
     width: 2rem;
     height: 2rem;
     font-size: 0.85rem;
   }
+
   .carousel-slide {
     padding: 1.5rem 1.25rem;
   }
+
   .marquee-fwd,
   .marquee-rev {
     animation-duration: 20s;
   }
+
   .skills-marquee-section {
     margin-top: 1.5rem;
   }
+
   footer nav {
     height: auto;
     margin-bottom: 1rem;
   }
+
   footer {
     padding: 1.5rem 5%;
   }
+
   .contact-info-upper-container {
     flex-direction: column;
     align-items: center;
@@ -160,18 +197,22 @@
     margin: 1.5rem auto;
     padding: 1rem 0.75rem;
   }
+
   .contact-info-container {
     width: 100%;
     margin: 0.5rem 0;
   }
+
   .contact-info-container p a {
     font-size: 0.85rem;
     word-break: break-all;
   }
+
   .color-container {
     width: 100%;
     box-sizing: border-box;
   }
+
   .about-containers {
     gap: 1rem;
   }
