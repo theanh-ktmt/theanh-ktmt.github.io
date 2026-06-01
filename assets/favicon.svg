@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Dark rounded square background -->
+  <rect width="64" height="64" rx="14" fill="rgb(35,35,35)"/>
+  <!-- Subtle top-left accent dot -->
+  <circle cx="10" cy="10" r="3" fill="rgb(120,120,120)" opacity="0.5"/>
+  <!-- TA monogram -->
+  <!-- T -->
+  <text
+    x="8"
+    y="45"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-weight="700"
+    font-size="34"
+    fill="white"
+    letter-spacing="-1">T</text>
+  <!-- A -->
+  <text
+    x="31"
+    y="45"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-weight="700"
+    font-size="34"
+    fill="rgb(180,180,180)">A</text>
+  <!-- Bottom accent line -->
+  <rect x="8" y="50" width="48" height="2" rx="1" fill="rgb(100,100,100)" opacity="0.6"/>
+</svg>
