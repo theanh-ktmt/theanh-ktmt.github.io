@@ -790,6 +790,19 @@ footer .nav-links {
   margin-top: 0.25rem;
 }
 
+/* BLOG NAV & FOOTER SEPARATOR */
+
+.nav-blog-sep,
+.footer-blog-sep {
+  border-left: 1px solid rgb(200, 200, 200);
+  padding-left: 1.5rem;
+}
+
+.nav-blog-sep::before,
+.footer-blog-sep::before {
+  display: none;
+}
+
 /* SKILLS MARQUEE */
 
 .skills-marquee-section {

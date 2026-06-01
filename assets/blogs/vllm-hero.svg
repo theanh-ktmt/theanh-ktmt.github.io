@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#0c0e1a"/>
+      <stop offset="100%" stop-color="#1a1d30"/>
+    </linearGradient>
+    <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.055)"/>
+    </pattern>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Ambient glow center -->
+  <ellipse cx="600" cy="290" rx="320" ry="200" fill="rgba(80,120,255,0.07)"/>
+
+  <!-- Left: KV cache paged blocks (representing requests A, B, C, D) -->
+  <g opacity="0.75">
+    <!-- Column 1 -->
+    <rect x="56"  y="160" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.75"/>
+    <rect x="56"  y="196" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.55"/>
+    <rect x="56"  y="232" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.75"/>
+    <rect x="56"  y="268" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.55"/>
+    <rect x="56"  y="304" width="44" height="28" rx="5" fill="#51cf66" opacity="0.75"/>
+    <rect x="56"  y="340" width="44" height="28" rx="5" fill="#51cf66" opacity="0.55"/>
+    <rect x="56"  y="376" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.75"/>
+    <rect x="56"  y="412" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.45"/>
+    <!-- Column 2 -->
+    <rect x="112" y="160" width="44" height="28" rx="5" fill="#51cf66" opacity="0.6"/>
+    <rect x="112" y="196" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.6"/>
+    <rect x="112" y="232" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.6"/>
+    <rect x="112" y="268" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.6"/>
+    <rect x="112" y="304" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.4"/>
+    <rect x="112" y="340" width="44" height="28" rx="5" fill="#51cf66" opacity="0.4"/>
+    <rect x="112" y="376" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.4"/>
+    <rect x="112" y="412" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.3"/>
+    <!-- Connector lines to center -->
+    <line x1="156" y1="283" x2="260" y2="295" stroke="rgba(74,158,255,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="156" y1="318" x2="260" y2="295" stroke="rgba(81,207,102,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+  </g>
+
+  <!-- Right: KV cache paged blocks -->
+  <g opacity="0.75">
+    <!-- Column 4 -->
+    <rect x="1044" y="160" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.6"/>
+    <rect x="1044" y="196" width="44" height="28" rx="5" fill="#51cf66" opacity="0.6"/>
+    <rect x="1044" y="232" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.6"/>
+    <rect x="1044" y="268" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.6"/>
+    <rect x="1044" y="304" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.4"/>
+    <rect x="1044" y="340" width="44" height="28" rx="5" fill="#51cf66" opacity="0.4"/>
+    <rect x="1044" y="376" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.4"/>
+    <rect x="1044" y="412" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.3"/>
+    <!-- Column 5 -->
+    <rect x="1100" y="160" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.75"/>
+    <rect x="1100" y="196" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.55"/>
+    <rect x="1100" y="232" width="44" height="28" rx="5" fill="#51cf66" opacity="0.75"/>
+    <rect x="1100" y="268" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.55"/>
+    <rect x="1100" y="304" width="44" height="28" rx="5" fill="#ff6b6b" opacity="0.55"/>
+    <rect x="1100" y="340" width="44" height="28" rx="5" fill="#4a9eff" opacity="0.45"/>
+    <rect x="1100" y="376" width="44" height="28" rx="5" fill="#ffd43b" opacity="0.45"/>
+    <rect x="1100" y="412" width="44" height="28" rx="5" fill="#51cf66" opacity="0.35"/>
+    <!-- Connector lines from center -->
+    <line x1="940" y1="295" x2="1044" y2="283" stroke="rgba(255,107,107,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="940" y1="295" x2="1044" y2="318" stroke="rgba(255,212,59,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+  </g>
+
+  <!-- Block labels -->
+  <text x="84"  y="155" text-anchor="middle" font-family="monospace" font-size="11" fill="rgba(255,255,255,0.35)" letter-spacing="1">GPU MEM</text>
+  <text x="1122" y="155" text-anchor="middle" font-family="monospace" font-size="11" fill="rgba(255,255,255,0.35)" letter-spacing="1">GPU MEM</text>
+
+  <!-- Main vLLM text -->
+  <text x="600" y="268" text-anchor="middle" font-family="'Courier New', Courier, monospace" font-size="110" font-weight="700" fill="white" filter="url(#glow)" letter-spacing="-3">vLLM</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="318" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="20" fill="rgba(255,255,255,0.6)" letter-spacing="3">HIGH-THROUGHPUT LLM SERVING ENGINE</text>
+
+  <!-- Divider -->
+  <line x1="380" y1="342" x2="820" y2="342" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+
+  <!-- Tag pills -->
+  <rect x="388" y="358" width="130" height="30" rx="15" fill="rgba(74,158,255,0.12)" stroke="rgba(74,158,255,0.45)" stroke-width="1"/>
+  <text x="453" y="378" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" fill="rgba(74,158,255,0.95)" letter-spacing="0.3">PagedAttention</text>
+
+  <rect x="534" y="358" width="132" height="30" rx="15" fill="rgba(81,207,102,0.12)" stroke="rgba(81,207,102,0.45)" stroke-width="1"/>
+  <text x="600" y="378" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" fill="rgba(81,207,102,0.95)" letter-spacing="0.3">Cont. Batching</text>
+
+  <rect x="682" y="358" width="130" height="30" rx="15" fill="rgba(255,212,59,0.12)" stroke="rgba(255,212,59,0.45)" stroke-width="1"/>
+  <text x="747" y="378" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" fill="rgba(255,212,59,0.95)" letter-spacing="0.3">GPU Serving</text>
+
+  <!-- Author line -->
+  <text x="600" y="450" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.3)" letter-spacing="0.5">The Anh Tran · June 1, 2026</text>
+</svg>
