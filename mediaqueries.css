@@ -114,15 +114,27 @@
     }
 
     .intro-text {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    .section__text__p1 {
+        font-size: 0.8rem;
     }
 
     .title {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .section__text__p2 {
-        font-size: 1.25rem;
+        font-size: 1.05rem;
+    }
+
+    .details-container {
+        font-size: 0.85rem;
+    }
+
+    .menu-links a {
+        font-size: 1.2rem;
     }
 
     .logo {
@@ -136,9 +148,20 @@
     }
 
     .about-containers,
-    .contact-info-upper-container,
-    .btn-container {
+    .contact-info-upper-container {
         flex-wrap: wrap;
+    }
+
+    #profile .btn-container {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+    }
+
+    #profile .btn {
+        font-size: 0.75rem;
+        padding: 0.7rem 0.5rem;
+        width: auto;
+        flex: 1;
     }
 
     .contact-info-container {
@@ -160,6 +183,7 @@
 
     .projects-carousel {
         gap: 0.4rem;
+        margin-top: 1.5rem;
     }
 
     .carousel-btn {
@@ -183,11 +207,40 @@
 
     footer nav {
         height: auto;
-        margin-bottom: 1rem;
+        margin-bottom: 0;
     }
 
     footer {
-        padding: 1.5rem 5%;
+        padding: 1.5rem 5% 1.25rem;
+        gap: 1rem;
+    }
+
+    .footer-brand {
+        font-size: 1.1rem;
+    }
+
+    .footer-tagline {
+        font-size: 0.75rem;
+    }
+
+    footer .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.88rem;
+    }
+
+    .footer-blog-sep {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid rgb(220, 220, 220);
+        padding-top: 0.45rem;
+        margin-top: 0.2rem;
+        width: 3rem;
+    }
+
+    .footer-copy {
+        font-size: 0.72rem;
     }
 
     .contact-info-upper-container {

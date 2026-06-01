@@ -113,31 +113,53 @@ a:hover {
 
 .menu-links {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 0.6rem);
     right: 0;
     background-color: white;
-    width: fit-content;
+    min-width: 160px;
     max-height: 0;
     overflow: hidden;
-    transition: all 0.3 ease-in-out;
+    transition: max-height 0.35s ease-in-out, opacity 0.25s ease;
+    opacity: 0;
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: 0.1rem solid rgb(220, 220, 220);
+    padding: 0.4rem 0;
+    z-index: 100;
 }
 
 .menu-links a {
     display: block;
-    padding: 10px;
-    text-align: center;
-    font-size: 1.5rem;
+    padding: 0.55rem 1.25rem;
+    text-align: right;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: rgb(53, 53, 53);
+    text-decoration: none;
+    transition: background 200ms ease, color 200ms ease;
+    border-radius: 0.75rem;
+    margin: 0 0.4rem;
+}
+
+.menu-links a:hover {
+    background: rgb(245, 245, 245);
     color: black;
     text-decoration: none;
-    transition: all 0.3 ease-in-out;
 }
 
 .menu-links li {
     list-style: none;
 }
 
+.menu-links li:last-child {
+    border-top: 0.1rem solid rgb(220, 220, 220);
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+}
+
 .menu-links.open {
-    max-height: 400px;
+    max-height: 500px;
+    opacity: 1;
 }
 
 .hamburger-icon.open span:first-child {
