@@ -14,7 +14,7 @@
   // (4) get the IDs from https://giscus.app and paste them below.
   var GISCUS = {
     repo: "theanh-ktmt/theanh-ktmt.github.io",
-    repoId: "REPLACE_WITH_REPO_ID",
+    repoId: "R_kgDOQ4anxA",
     category: "Announcements",
     categoryId: "REPLACE_WITH_CATEGORY_ID",
   };
@@ -268,7 +268,10 @@
   function initComments() {
     var mount = document.getElementById("giscus-container");
     if (!mount) return;
-    if (GISCUS.repoId.indexOf("REPLACE_WITH") === 0) {
+    if (
+      GISCUS.repoId.indexOf("REPLACE_WITH") === 0 ||
+      GISCUS.categoryId.indexOf("REPLACE_WITH") === 0
+    ) {
       mount.innerHTML =
         '<p class="comments-setup-note">💬 Comments aren\'t configured yet. ' +
         "Set up <a href=\"https://giscus.app\" target=\"_blank\" rel=\"noopener\">giscus</a> " +
