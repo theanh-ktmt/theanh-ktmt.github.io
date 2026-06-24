@@ -1,0 +1,373 @@
+---
+title: "Speculative Decoding: Faster LLM Inference with Zero Quality Loss"
+description: "A friendly, comprehensive survey of speculative decoding — how draft-and-verify works, the metrics that matter (α, γ, τ), and the lineage from standard drafting through Medusa, EAGLE 1/2/3, and MTP."
+date: 2026-06-24
+tags: ["LLM", "Inference", "Speculative Decoding", "EAGLE", "GPU"]
+readTime: "14 min read"
+hero: "/assets/blogs/speculative-decoding/hero.svg"
+heroAlt: "Speculative Decoding — draft fast, verify in parallel, lose nothing"
+ogDescription: "Draft fast, verify in parallel, lose nothing. A tour of speculative decoding from first principles to EAGLE-3 and Multi-Token Prediction."
+---
+
+import Callout from "../../components/Callout.astro";
+import Figure from "../../components/Figure.astro";
+
+If you've ever watched a large language model type out an answer token-by-token, you've felt the core problem of LLM inference: it's *sequential*. Each new token waits for the previous one to be produced. Meanwhile, your expensive GPU spends most of its time waiting on memory rather than doing math. **Speculative decoding** is the elegant trick that breaks this bottleneck — and, remarkably, it does so **without changing the model's output at all**.
+
+This post is a friendly, comprehensive tour of the idea. We'll build intuition from first principles, define the handful of metrics that actually matter, and then walk the evolutionary lineage of techniques — from the original draft-model approach through Medusa, the EAGLE family, and Multi-Token Prediction. Along the way we'll look at how to turn it on in real frameworks like vLLM and SGLang.
+
+## What Is Speculative Decoding?
+
+Speculative decoding is an **inference-time optimization** that speeds up token generation *without reducing output quality*. The mechanism rests on a partnership between two models:
+
+- **The draft model (a small, fast SLM)** — proposes several candidate tokens ahead, cheaply and quickly.
+- **The target model (the big, accurate LLM)** — verifies those proposed tokens *in parallel*, accepting the ones it agrees with.
+
+Because verification of many tokens happens in a single forward pass of the large model, you get the speed of the small model with the exact output distribution of the large one. In practice this often delivers a **~3× speedup** in inference latency with **guaranteed zero quality loss**.
+
+<Callout type="blue">
+
+🔑 The headline guarantee: when implemented with rejection sampling, speculative decoding produces tokens drawn from *exactly the same distribution* as the target model would have produced on its own. You are not trading accuracy for speed — you are getting speed for free.
+
+</Callout>
+
+## Why Do We Need It?
+
+To appreciate why this works, you have to understand why autoregressive generation is slow in the first place. There are two ideas worth internalizing.
+
+### 1. The memory-bound bottleneck
+
+Modern GPUs have enormous compute throughput but comparatively limited **memory bandwidth**. During single-sequence decoding, every step has to stream the entire model's weights from memory just to produce *one* token. The arithmetic units sit largely idle waiting for those weights to arrive — the hardware is starved on bandwidth, not on math. This is the classic **memory-bound** regime, and it's why generating one token at a time wastes most of your GPU.
+
+### 2. The predictability paradox
+
+Here's the insight that makes the whole thing work: *many tokens are "obvious."* Closing a bracket, finishing a common word, completing a boilerplate phrase — these can be predicted correctly by a much smaller, cheaper model. We don't need the full power of a 70B-parameter model to guess that `"def "` is often followed by a function name, or that `"San"` is frequently followed by `"Francisco"`.
+
+<Callout>
+
+💡 The opportunity: since the GPU is idle during sequential decoding *anyway*, we can spend that spare compute verifying a batch of cheap guesses. Parallel verification turns wasted bandwidth-bound time into useful work, drastically reducing **Inter-Token Latency (ITL)**.
+
+</Callout>
+
+## How Does It Actually Work?
+
+At a high level, speculative decoding runs as a loop. Each round, the small model races ahead with a guess, and the big model checks the work.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/how-it-works.png"
+  alt="Worked example: draft proposes nice today outside, target accepts nice today, rejects outside, generates for, and repeats"
+  caption={`Figure 1 — The draft-and-verify loop on a concrete example. The draft proposes <em>"nice today outside"</em>; the target accepts the agreeable prefix <em>"nice today"</em>, rejects <em>"outside"</em>, emits <em>"for"</em> itself, and the cycle repeats on the extended sequence.`}
+/>
+
+1. **Draft prediction** — the draft model predicts the next `K` (= γ) tokens that follow the current input sequence.
+2. **Parallel verification** — the target model verifies all `K` tokens at once, in a single forward pass, checking whether it would have predicted them too.
+3. **Prefix acceptance** — the target accepts the *longest prefix* of those `K` tokens that it agrees with.
+4. **Correction step** — if it accepted `h` tokens, the target then generates the `(h+1)`-th token itself, keeping generation on the rails. (Crucially, this correction token is essentially free — it comes out of the same verification pass.)
+5. **Recurrence** — the loop repeats on the new, extended sequence.
+
+The beauty is in step 4: even in the worst case where *every* guess is wrong, you still get one correct token per round — exactly the same as plain autoregressive decoding. So speculative decoding can never be slower than the baseline in terms of token correctness; it can only win.
+
+## The Three Metrics That Matter
+
+Three variables govern how much speedup you actually get. If you only remember three Greek letters from this post, make it these.
+
+| Symbol | Name | What it means |
+| --- | --- | --- |
+| α (alpha) | Acceptance Rate | Probability that a drafted token is accepted. Higher α means better latency and GPU utilization. |
+| γ (gamma) | Speculative Count | How many tokens the draft proposes per step. A key configurable hyperparameter. |
+| τ (tau) | Acceptance Length | Average number of tokens accepted per round. The primary indicator of real wall-clock speedup. |
+
+The interaction between drafting *accuracy* (α) and draft *length* (γ) is what ultimately dictates system efficiency. Push γ too high with a weak draft model and you waste compute on guesses that get rejected; keep γ too low and you leave speedup on the table.
+
+### How acceptance rate impacts performance
+
+To study the theoretical limits, the vLLM engine can be patched to *simulate* decoding at arbitrary α and γ values — decoupling the algorithm's potential from any particular draft model's quality. The findings make the role of acceptance accuracy vivid.
+
+1. **Linear correlation.** Latency drops and throughput rises almost *linearly* as α increases. A higher acceptance rate consistently produces greater speedup.
+2. **Diminishing returns on γ.** Increasing the speculative count only helps when τ is already high. Otherwise, the overhead of generating and verifying a longer draft can actually *hurt* performance.
+
+<Callout type="green">
+
+⚡ The sweet spot: at **α ≥ 0.6** and **γ ≥ 5**, simulations achieved **2–3× speedups**.
+
+</Callout>
+
+<Callout>
+
+📌 A note on honesty: in practice, *real-world speedups were lower than these theoretical simulations*. Drafting overhead, batching effects, and scheduling all eat into the idealized numbers — something to keep in mind before promising 3× to your stakeholders.
+
+</Callout>
+
+## What Makes One Method Different From Another?
+
+Every speculative decoding method can be understood along **two axes**. Once you internalize these, the whole research landscape snaps into focus:
+
+1. **Draft generation mechanism** — *how do we make the guesses?* A separate small model? Extra prediction heads bolted onto the target? A lightweight feature predictor?
+2. **Verification topology** — *how do we organize and validate those guesses in a single forward pass?* A linear chain? A branching tree of candidates?
+
+<Figure
+  src="/assets/blogs/speculative-decoding/lineage.svg"
+  alt="Timeline of speculative decoding methods: Standard, Medusa, EAGLE-1, EAGLE-2/3, DeepSeek MTP"
+  caption={`Figure 2 — The evolutionary lineage, by how each method drafts. From a separate small model, to extra heads, to feature-level trees, to speculation baked into the backbone.`}
+/>
+
+## The Lineage, Method by Method
+
+### Standard speculative decoding (the draft model)
+
+The original formulation (Leviathan et al., 2022) uses an **independent small model** `Mq` alongside the target `Mp`.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/token-example.png"
+  alt="Token-by-token decoding of a sentence; green tokens are accepted drafts, red tokens are corrected by the target"
+  caption={`Figure 3 — Speculative decoding in action (Leviathan et al., 2022). Green tokens were proposed by the draft and accepted as-is; red tokens were rejected and corrected by the target. Most tokens are "easy," so long green runs are common.`}
+/>
+
+- **Draft generation:** autoregressive guessing — the small model `Mq` runs sequentially to generate γ look-ahead candidate tokens `(x₁, ..., xγ)`.
+- **Verification:** the target `Mp` processes all γ tokens simultaneously. **Rejection sampling** then decides acceptance — token `i` is accepted if `rᵢ ≤ pᵢ(xᵢ) / qᵢ(xᵢ)`, and the chain stops at the first rejection. (When a token is rejected, a replacement is sampled from a corrected residual distribution `p'(x)`, which is what preserves the exact output distribution.)
+
+<Figure
+  src="/assets/blogs/speculative-decoding/algorithm.png"
+  alt="Algorithm 1: SpeculativeDecodingStep pseudocode showing drafting, parallel scoring, acceptance test, and residual correction"
+  caption={`Figure 4 — The core algorithm. The draft samples γ guesses; the target scores them in parallel; each is accepted with probability <code>min(1, pᵢ/qᵢ)</code>; and on the first rejection a token is resampled from the corrected residual <code>p'(x)</code>. This is the step that guarantees the output matches the target's distribution.`}
+/>
+
+This clean approach has real limitations:
+
+- **Distribution mismatch** — if `q` diverges from `p`, the acceptance rate drops and the speedup evaporates.
+- **Memory overhead** — you must host a second model in VRAM alongside the target.
+- **Low-latency issues** — in memory-bound scenarios, the drafting overhead can outweigh the benefit.
+- **Sequential break** — a single wrong guess wastes the rest of that parallel block.
+
+### Medusa — drop the draft model, add heads
+
+Medusa asks: what if we don't need a separate model at all? Instead, it attaches **multiple decoding heads** directly to the target model.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/medusa-architecture.png"
+  alt="Medusa architecture: the original model's last hidden state feeds several Medusa heads that each predict a future token, producing top-k candidates"
+  caption={`Figure 5 — Medusa bolts extra heads onto the frozen base model. Each head predicts a different future position; their top-<code>k</code> options are combined into candidate continuations and verified together.`}
+/>
+
+- **Draft-model-free** — eliminating the companion model cuts the memory overhead.
+- **Multiple decoding heads** — extra feed-forward heads predict future tokens (`t+2`, `t+3`, ...) simultaneously.
+- **Compute-bound efficiency** — it leverages parallel block generation to convert the otherwise-idle compute into throughput.
+
+Medusa also upgrades the **verification topology** to a **tree of candidates**: instead of one linear sequence, it builds a branching tree of top-`k` token combinations and uses **tree attention** to validate dozens of paths in one forward pass. Because multiple branches are checked at once, generation can continue even if one path is rejected.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/medusa-tree-mask.png"
+  alt="Tree mask attention: candidate tokens arranged as a tree, with an attention mask that lets each node attend only to its ancestors"
+  caption={`Figure 6 — Tree attention in one pass. Candidates form a tree (Head 1, Head 2, ...), and a custom <em>tree mask</em> lets every node attend only to its own ancestors — so dozens of candidate paths are validated simultaneously without interfering with each other.`}
+/>
+
+Medusa's trade-offs:
+
+- **Training overhead** — the heads need extra fine-tuning, often on domain-specific data.
+- **Memory overhead** — tree verification expands the KV cache footprint.
+- **Inter-head dependency** — the heads lack autoregressive dependency on each other, so predictions skip intermediate token context.
+
+<Callout type="green">
+
+⚡ Medusa delivers up to **~2×** speedup.
+
+</Callout>
+
+### EAGLE — predict features, not tokens
+
+EAGLE makes a subtle but powerful change. Rather than predicting the next *token* directly, its draft module — a single, lightweight Transformer decoder layer — predicts the **hidden feature vector** of the next step. Working in feature space turns out to be much more learnable, which boosts acceptance.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/eagle-architecture.png"
+  alt="EAGLE architecture: the draft model extrapolates feature vectors from the target's hidden states, then expands them into a draft tree over several forward passes"
+  caption={`Figure 7 — EAGLE drafts in <em>feature</em> space. A lightweight head extrapolates the next hidden-state features from the target's own representations, then unrolls them into a draft tree the target verifies.`}
+/>
+
+- **EAGLE-1:** feature-level drafting with **static tree attention**. Its limitation is the *fixed* tree layout, which can't adapt to easy vs. hard prompts.
+- **EAGLE-2:** introduces a **dynamic tree layout**. It uses real-time confidence scores to prune weak branches and deepen promising ones on the fly — and requires *no extra training* over EAGLE-1.
+- **EAGLE-3:** the current state of the art. It adds a **training-time test** that bridges the training–inference gap by training the draft head on its own imperfect predictions.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/eagle2-dynamic-tree.png"
+  alt="EAGLE-2 dynamic draft tree: expand top-2 candidates, rerank to top-8 by confidence, then flatten to a 1D verification sequence"
+  narrow
+  caption={`Figure 8 — EAGLE-2's <em>context-aware</em> draft tree. It expands promising nodes, reranks by confidence, and flattens the survivors into a single verification sequence — spending the draft budget where the model is actually uncertain, with no extra training.`}
+/>
+
+EAGLE-3's training-time test runs in three steps:
+
+1. **Simulation** — the draft head generates a noisy draft tree containing realistic prediction errors.
+2. **Verification** — the target LLM processes that noisy tree to produce ground-truth targets.
+3. **Optimization** — the draft head is trained for error-correction based on its own noisy history, so it learns to recover from its mistakes at inference time.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/eagle3-training-time-test.png"
+  alt="Comparison of EAGLE, EAGLE with feature-loss removal, and EAGLE-3's training-time test, where the draft head trains on its own multi-step predictions"
+  narrow
+  caption={`Figure 9 — Why EAGLE-3 wins. Earlier variants train against clean teacher features (top); EAGLE-3's <em>training-time test</em> (bottom) feeds the head its own predicted features at training time, matching the error distribution it will face at inference.`}
+/>
+
+<Callout type="blue">
+
+🏆 By training the draft head against its *own* error distribution rather than perfect teacher-forced data, EAGLE-3 closes the gap between how the model is trained and how it's actually used — which is exactly why it reaches SOTA acceptance lengths.
+
+</Callout>
+
+### DeepSeek MTP — bake it into the backbone
+
+Multi-Token Prediction (MTP) takes the most radical stance: build the speculation capability into the model from day one.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/mtp-architecture.png"
+  alt="Multi-Token Prediction: a shared backbone with multiple heads each predicting several future tokens, trained during pre-training"
+  caption={`Figure 10 — Multi-Token Prediction. A shared backbone drives heads that each predict several tokens ahead. Because the modules are trained <em>with</em> the base model, drafts inherit its full quality — but you can't add them after the fact.`}
+/>
+
+- **Draft generation:** sequential MTP modules are *natively integrated into the backbone during pre-training*. Each module maintains its own hidden states sequentially, so drafts inherit the full quality of the base model.
+- **Verification:** linear or tree verification validates multiple sequential steps inline.
+- **Limitation:** it cannot be added post-hoc — you need expensive pre-training alongside the base model. You either have MTP from the start, or you don't.
+
+### Lookahead Reasoning — speculate on whole steps
+
+A 2025 direction pushes the granularity of speculation upward. Where traditional methods work at the **token level**, Lookahead Reasoning works at the **step level**.
+
+<Figure
+  src="/assets/blogs/speculative-decoding/lookahead-reasoning.png"
+  alt="Timeline comparing autoregressive decoding with Lookahead Reasoning, which drafts whole reasoning steps and verifies them semantically in parallel"
+  caption={`Figure 11 — Lookahead Reasoning speculates on entire steps (<code>ŝ₁, ŝ₂, ...</code>) rather than single tokens, and verifies them by <em>semantic</em> equivalence in parallel — collapsing several target steps into one wall-clock span.`}
+/>
+
+| Aspect | Traditional SD | Lookahead Reasoning (2025) |
+| --- | --- | --- |
+| Draft granularity | Token-level — predicts γ individual tokens | Step-level — predicts entire reasoning steps (sentences / logical blocks) |
+| Verification | Exact-match; chain breaks at first misaligned token | Semantic & batched; 2D parallelism verifies future steps via semantic outcomes |
+
+This is especially compelling for reasoning models, where being slightly "wrong" on an exact token doesn't matter if the *logical step* is correct — semantic verification is far more forgiving than strict statistical alignment.
+
+## Turning It On in Real Frameworks
+
+The good news: you rarely have to implement any of this yourself. Both vLLM and SGLang expose speculative decoding through configuration.
+
+### vLLM
+
+A classic draft model — pair a big target with a small drafter:
+
+```python
+from vllm import LLM
+
+# Draft-model speculative decoding
+llm = LLM(
+    model="Qwen/Qwen3-8B",
+    tensor_parallel_size=1,
+    speculative_config={
+        "model": "Qwen/Qwen3-0.6B",     # the small drafter
+        "num_speculative_tokens": 5,     # this is γ
+        "method": "draft_model",
+    },
+)
+```
+
+EAGLE — point at a trained EAGLE head for the target model:
+
+```python
+llm = LLM(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    tensor_parallel_size=4,
+    speculative_config={
+        "model": "yuhuili/EAGLE-LLaMA3-8B",
+        "draft_tensor_parallel_size": 1,
+        "num_speculative_tokens": 2,
+        "method": "eagle",
+    },
+)
+```
+
+Multi-Token Prediction — for models that ship with MTP modules:
+
+```python
+llm = LLM(
+    model="XiaomiMiMo/MiMo-7B-Base",
+    tensor_parallel_size=1,
+    speculative_config={"method": "mtp", "num_speculative_tokens": 1},
+)
+```
+
+### SGLang
+
+SGLang exposes the same families through launch flags. Here's EAGLE-3, which exposes the tree-shape knobs directly:
+
+```bash
+python3 -m sglang.launch_server \
+    --model meta-llama/Meta-Llama-3.1-8B-Instruct \
+    --speculative-algorithm EAGLE3 \
+    --speculative-draft-model-path jamesliu1/sglang-EAGLE3-Llama-3.1-Instruct-8B \
+    --speculative-num-steps 3 \
+    --speculative-eagle-topk 4 \
+    --speculative-num-draft-tokens 16 \
+    --mem-fraction-static 0.7 \
+    --dtype float16
+```
+
+The same server also supports a standalone draft model (`STANDALONE`, via Spec V2) and MTP — the pattern is consistent: pick an algorithm, point at a draft, and tune the step / top-k / draft-token counts.
+
+## Tuning the Speculative Length
+
+Choosing γ (how many tokens to draft per step) is the main knob you will turn. Two approaches dominate:
+
+1. **Empirical grid search & profiling.** The most common approach: run benchmark queries with varying draft lengths against *your* specific hardware and workload, and measure. The optimum depends on your model pair, batch size, and sequence length, so there's no universal magic number.
+2. **Dynamic Speculation Length (DSL).** An adaptive scheme using a confidence-threshold early-exit: the draft stops proposing as soon as its confidence drops, instead of always emitting a fixed γ. (See the ongoing work in `vllm-project/vllm` issue #36657.)
+
+## How Do We Measure Success?
+
+Because speculative decoding is purely a systems optimization, evaluation spans both *quality-neutral throughput* and a spread of task domains to make sure acceptance holds up across workloads.
+
+### Datasets
+
+| Dataset | Domain | What it covers |
+| --- | --- | --- |
+| HumanEval | Coding & logic | 164 hand-written Python problems with unit tests |
+| SWE-bench | Software engineering | 2,294 problems from real GitHub issues and PRs |
+| Aider Polyglot | Multi-language | Coding challenges across several languages |
+| MT-Bench | Conversational | 80 multi-turn prompts across 8 categories |
+| AlpacaEval | Open-ended | 805 instructions testing general knowledge |
+| Spec-Bench | Speculative focus | Tasks curated specifically to evaluate speculative decoding |
+
+### Metrics
+
+- **Speedup ratio** — generation throughput (tokens/sec) versus the standard autoregressive baseline.
+- **Per-request throughput** — real-world end-to-end latency in production or multi-user environments.
+- **Acceptance rate (α)** — the conditional probability that a drafted token matches the target's distribution.
+- **Mean acceptance length (τ)** — the average number of tokens validated and accepted per verification step.
+
+## Putting Numbers to It
+
+So how do the methods actually stack up? The figure below collects reported speedups and acceptance lengths (τ) across several models and tasks at greedy decoding (temperature = 0).
+
+<Figure
+  src="/assets/blogs/speculative-decoding/benchmarks.png"
+  alt="Benchmark table of speedup and acceptance length across MT-bench, HumanEval, GSM8K, Alpaca and CNN/DM for SpS, PLD, Medusa, Lookahead, Hydra, EAGLE, EAGLE-2 and EAGLE-3"
+  caption={`Figure 12 — Reported speedup and acceptance length τ across tasks and model sizes. Note the clear progression: from ~1.9× for vanilla speculative sampling (SpS) up to <strong>5.5×</strong> mean speedup for EAGLE-3 on Vicuna-13B — and that the ranking is consistent across very different workloads.`}
+/>
+
+Two things jump out. First, the *family* matters far more than the task: EAGLE-3 leads everywhere, which is exactly what you'd expect from a method that maximizes acceptance length. Second, the gains *compound with model size in your favor* — even on a 70B model, EAGLE-3 sustains a ~4× speedup, because the bigger and more memory-bound the target, the more there is to gain from verifying cheap drafts in parallel.
+
+## Conclusion
+
+Speculative decoding is one of those rare optimizations that feels like a free lunch — and, mathematically, very nearly is. By recognizing that sequential decoding wastes GPU bandwidth and that many tokens are easy to guess, it converts idle compute into parallel verification and buys real latency wins with *provably zero* change to output quality.
+
+The field has matured fast. We've gone from "run a small model alongside the big one" to feature-level prediction (EAGLE), self-correcting training-time tests (EAGLE-3), heads baked into pre-training (MTP), and semantic step-level speculation (Lookahead Reasoning). The two questions never change, though: **how do we draft**, and **how do we verify**. Keep your eye on the three metrics — α, γ, and τ — and you'll be able to reason about any new method that comes along.
+
+If you're serving LLMs today, speculative decoding is no longer exotic: it's a config flag away in vLLM and SGLang. Just remember to profile on your own workload — the theoretical 3× is a ceiling, not a promise.
+
+<Callout>
+
+📚 Key references:
+
+- **Source deck** — The Anh Tran, AISys Team, *Research on Speculative Decoding: A Comprehensive Survey* — [Google Slides](https://docs.google.com/presentation/d/1jZJIevFbS8s7G2VqYJmXOR3jrBMr30EKr4slhTY-AUw/edit?usp=sharing)
+- Leviathan et al., *Fast Inference from Transformers via Speculative Decoding* — [arXiv:2211.17192](https://arxiv.org/pdf/2211.17192)
+- *EAGLE: Speculative Decoding via Feature-level Predictors* — [arXiv:2401.10774](https://arxiv.org/pdf/2401.10774)
+- *EAGLE-2: Context-aware Dynamic Draft Trees* — [arXiv:2406.16858](https://arxiv.org/pdf/2406.16858)
+- *EAGLE-3: Scaling Inference Acceleration via Training-time Test* — [arXiv:2503.01840](https://arxiv.org/pdf/2503.01840)
+- Speculative decoding research archive — [arXiv:2401.15077](https://arxiv.org/pdf/2401.15077)
+
+</Callout>

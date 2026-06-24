@@ -1,0 +1,89 @@
+---
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/style.css";
+import "../styles/mediaqueries.css";
+import "../styles/blogs.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogType?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  robots?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = "website",
+  ogTitle,
+  ogDescription,
+  ogImage,
+  robots,
+} = Astro.props;
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = ogImage
+  ? new URL(ogImage, Astro.site).href
+  : undefined;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme") || "dark";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {robots && <meta name="robots" content={robots} />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={ogTitle ?? title} />
+    {
+      (ogDescription ?? description) && (
+        <meta property="og:description" content={ogDescription ?? description} />
+      )
+    }
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    <meta name="twitter:card" content={ogImageUrl ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={ogTitle ?? title} />
+    {
+      (ogDescription ?? description) && (
+        <meta name="twitter:description" content={ogDescription ?? description} />
+      )
+    }
+    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <div class="toast" id="copy-toast">&#10003;&nbsp; Link copied to clipboard!</div>
+    <script>
+      import "../scripts/site.js";
+    </script>
+  </body>
+</html>

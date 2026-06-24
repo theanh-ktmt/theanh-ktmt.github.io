@@ -1,6 +1,6 @@
-// ── Shared site behaviors ───────────────────────────────────
-// Loaded on every page. Injects shared partials (nav/footer) then
-// wires theme toggle, mobile menu, scrollspy, scroll-reveal, etc.
+// ── Shared site behaviors (theme, menu, scrollspy, reveal, etc.) ──
+// Imported once from BaseLayout; runs on every page. Nav/footer are
+// rendered server-side by Astro components, so no include-loader needed.
 (function () {
   "use strict";
 
@@ -9,9 +9,6 @@
   ).matches;
 
   // ── Giscus comments config ────────────────────────────────
-  // To enable: (1) make the repo public, (2) enable GitHub
-  // Discussions, (3) install the giscus app (github.com/apps/giscus),
-  // (4) get the IDs from https://giscus.app and paste them below.
   var GISCUS = {
     repo: "theanh-ktmt/theanh-ktmt.github.io",
     repoId: "R_kgDOQ4anxA",
@@ -19,38 +16,10 @@
     categoryId: "DIC_kwDOQ4anxM4C_zuD",
   };
 
-  // ── Partial includes ──────────────────────────────────────
-  function injectIncludes() {
-    var nodes = Array.prototype.slice.call(
-      document.querySelectorAll("[data-include]"),
-    );
-    return Promise.all(
-      nodes.map(function (node) {
-        var url = node.getAttribute("data-include");
-        return fetch(url)
-          .then(function (r) {
-            return r.ok ? r.text() : "";
-          })
-          .then(function (html) {
-            if (html) {
-              var tpl = document.createElement("div");
-              tpl.innerHTML = html;
-              node.replaceWith.apply(
-                node,
-                Array.prototype.slice.call(tpl.childNodes),
-              );
-            }
-          })
-          .catch(function () {});
-      }),
-    );
-  }
-
   // ── Theme (dark / light) ──────────────────────────────────
   function currentTheme() {
-    return document.documentElement.getAttribute("data-theme") || "light";
+    return document.documentElement.getAttribute("data-theme") || "dark";
   }
-
   function applyTheme(t) {
     document.documentElement.setAttribute("data-theme", t);
     try {
@@ -61,20 +30,19 @@
       .forEach(function (b) {
         b.setAttribute("aria-pressed", String(t === "dark"));
       });
-    // Let embeds (e.g. giscus) react to the change.
     document.dispatchEvent(
       new CustomEvent("themechange", { detail: { theme: t } }),
     );
   }
-
   function initTheme() {
-    var btns = document.querySelectorAll("#theme-toggle, #theme-toggle-mobile");
-    btns.forEach(function (b) {
-      b.setAttribute("aria-pressed", String(currentTheme() === "dark"));
-      b.addEventListener("click", function () {
-        applyTheme(currentTheme() === "dark" ? "light" : "dark");
+    document
+      .querySelectorAll("#theme-toggle, #theme-toggle-mobile")
+      .forEach(function (b) {
+        b.setAttribute("aria-pressed", String(currentTheme() === "dark"));
+        b.addEventListener("click", function () {
+          applyTheme(currentTheme() === "dark" ? "light" : "dark");
+        });
       });
-    });
   }
 
   // ── Mobile (hamburger) menu ────────────────────────────────
@@ -96,19 +64,6 @@
         setOpen(false);
       });
     });
-  }
-
-  // ── Active nav link ────────────────────────────────────────
-  function initActiveNav() {
-    var path = location.pathname;
-    var onBlog = /\/blogs(\.html)?$/.test(path) || /\/blogs\//.test(path);
-    if (onBlog) {
-      document
-        .querySelectorAll('a[href="/blogs.html"]')
-        .forEach(function (a) {
-          a.classList.add("nav-active");
-        });
-    }
   }
 
   // ── Scrollspy (home page section nav) ──────────────────────
@@ -160,8 +115,6 @@
     ].join(",");
     var els = Array.prototype.slice.call(document.querySelectorAll(SEL));
     if (!els.length) return;
-
-    // Stagger items that share a parent.
     var seen = new Map();
     els.forEach(function (el) {
       el.classList.add("reveal");
@@ -170,7 +123,6 @@
       if (n) el.style.transitionDelay = Math.min(n * 70, 350) + "ms";
       seen.set(p, n + 1);
     });
-
     var obs = new IntersectionObserver(
       function (entries, o) {
         entries.forEach(function (en) {
@@ -215,10 +167,7 @@
     btn.innerHTML = "&#8593;";
     document.body.appendChild(btn);
     btn.addEventListener("click", function () {
-      window.scrollTo({
-        top: 0,
-        behavior: prefersReduced ? "auto" : "smooth",
-      });
+      window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
     });
     function toggle() {
       btn.classList.toggle("show", window.scrollY > 600);
@@ -227,7 +176,7 @@
     window.addEventListener("scroll", toggle, { passive: true });
   }
 
-  // ── Copy post link (blog posts) ────────────────────────────
+  // ── Copy post link ─────────────────────────────────────────
   function showToast() {
     var toast = document.getElementById("copy-toast");
     if (!toast) return;
@@ -235,16 +184,6 @@
     setTimeout(function () {
       toast.classList.remove("show");
     }, 2500);
-  }
-  function copyPostLink() {
-    var url = window.location.href;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(showToast, function () {
-        fallbackCopy(url);
-      });
-    } else {
-      fallbackCopy(url);
-    }
   }
   function fallbackCopy(text) {
     var el = document.createElement("textarea");
@@ -258,8 +197,20 @@
     } catch (e) {}
     document.body.removeChild(el);
   }
-  // expose for inline onclick in existing blog markup
-  window.copyPostLink = copyPostLink;
+  function initCopy() {
+    document.querySelectorAll(".copy-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(showToast, function () {
+            fallbackCopy(url);
+          });
+        } else {
+          fallbackCopy(url);
+        }
+      });
+    });
+  }
 
   // ── Comments (giscus) ──────────────────────────────────────
   function giscusTheme() {
@@ -268,16 +219,6 @@
   function initComments() {
     var mount = document.getElementById("giscus-container");
     if (!mount) return;
-    if (
-      GISCUS.repoId.indexOf("REPLACE_WITH") === 0 ||
-      GISCUS.categoryId.indexOf("REPLACE_WITH") === 0
-    ) {
-      mount.innerHTML =
-        '<p class="comments-setup-note">💬 Comments aren\'t configured yet. ' +
-        "Set up <a href=\"https://giscus.app\" target=\"_blank\" rel=\"noopener\">giscus</a> " +
-        "and add the repo / category IDs in <code>/js/site.js</code>.</p>";
-      return;
-    }
     var s = document.createElement("script");
     s.src = "https://giscus.app/client.js";
     var attrs = {
@@ -301,7 +242,6 @@
     s.async = true;
     mount.appendChild(s);
   }
-  // Keep giscus theme in sync with the site toggle.
   document.addEventListener("themechange", function () {
     var frame = document.querySelector("iframe.giscus-frame");
     if (!frame) return;
@@ -313,19 +253,15 @@
 
   // ── Boot ───────────────────────────────────────────────────
   function boot() {
-    injectIncludes().then(function () {
-      initTheme();
-      initHamburger();
-      initActiveNav();
-      initScrollspy();
-    });
-    // Content-dependent features (don't need partials)
+    initTheme();
+    initHamburger();
+    initScrollspy();
     initReveal();
     initReadingProgress();
     initBackToTop();
+    initCopy();
     initComments();
   }
-
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);
   } else {

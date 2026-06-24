@@ -1,0 +1,8 @@
+---
+const { src, alt = "", caption = "", narrow = false } = Astro.props;
+---
+
+<div class={`blog-figure${narrow ? " narrow" : ""}`}>
+  <img src={src} alt={alt} />
+  {caption && <figcaption set:html={caption} />}
+</div>

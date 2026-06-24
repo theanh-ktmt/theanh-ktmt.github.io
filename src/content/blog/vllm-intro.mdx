@@ -1,0 +1,201 @@
+---
+title: "vLLM: A Deep Dive into High-Throughput LLM Serving"
+description: "An in-depth introduction to vLLM — how PagedAttention and Continuous Batching revolutionize LLM serving throughput and GPU memory efficiency."
+date: 2026-06-01
+tags: ["LLM", "Inference", "vLLM", "GPU"]
+readTime: "8 min read"
+hero: "/assets/blogs/vllm-intro/hero.svg"
+heroAlt: "vLLM — High-Throughput LLM Serving Engine"
+ogDescription: "PagedAttention and Continuous Batching explained — the two innovations that made vLLM the standard for LLM serving."
+---
+
+import Callout from "../../components/Callout.astro";
+
+Deploying Large Language Models at scale is fundamentally different from training them. While training is a one-time batch operation, serving must handle hundreds of concurrent requests with low latency and high throughput — all while managing the enormous memory footprint of modern models. **vLLM**, developed at UC Berkeley, has become the de facto standard for efficient LLM serving, and understanding it is essential for any engineer working in this space.
+
+## The Memory Problem in LLM Serving
+
+To understand why vLLM matters, we first need to understand the problem it solves: the **KV cache memory management problem**.
+
+During autoregressive decoding, each token generation requires accessing the attention *Key* and *Value* tensors for every previous token in the sequence. These are cached to avoid recomputation — this is the **KV cache**. Its size grows linearly with sequence length and varies unpredictably per request:
+
+- A 13B parameter model may need ~1.7 MB of KV cache per token per layer
+- A 2048-token sequence can require over 3 GB of KV cache
+- At 100 concurrent requests, you're looking at hundreds of gigabytes
+
+Traditional serving systems (HuggingFace Transformers, early TGI) pre-allocate KV cache memory based on the *maximum possible sequence length* for each request. This causes two compounding problems:
+
+1. **Internal fragmentation**: Most requests finish well before the maximum length, leaving pre-allocated memory unused.
+2. **External fragmentation**: As requests of different lengths arrive and depart, free memory becomes non-contiguous, making it impossible to serve new requests even when enough total bytes exist.
+
+<Callout>
+
+💡 In practice, traditional systems achieve only **20–40% GPU memory utilization** for KV cache, with the rest wasted on fragmentation and unused reservations.
+
+</Callout>
+
+## What is vLLM?
+
+vLLM is an open-source library for fast and memory-efficient LLM inference and serving. Released by the Sky Computing Lab at UC Berkeley in 2023, it introduced two key innovations that together solve the memory problem entirely:
+
+- **PagedAttention** — a new attention algorithm that manages KV cache using OS-style virtual memory paging
+- **Continuous Batching** — an iteration-level scheduler that maximizes GPU utilization by replacing finished requests in-flight
+
+vLLM supports virtually the entire modern LLM ecosystem: LLaMA, Mistral, Qwen, Gemma, Falcon, Mixtral, and any HuggingFace-compatible architecture. It exposes both a Python API and an OpenAI-compatible REST API, making migration straightforward.
+
+## PagedAttention — The Core Innovation
+
+PagedAttention is directly inspired by **virtual memory paging** in operating systems. The key insight: *KV cache blocks do not need to be contiguous in physical GPU memory*.
+
+Here's the mechanism step by step:
+
+1. GPU memory is pre-divided into fixed-size **physical KV blocks** (typically 16 or 32 tokens per block, configurable)
+2. Each request maintains a **logical block table** — a mapping from logical block indices to physical block addresses
+3. Physical blocks are allocated **on-demand** as a sequence grows, one block at a time — no upfront reservation
+4. When a request completes, its physical blocks are immediately returned to the free pool for reuse
+
+<Callout type="blue">
+
+🔑 The result: near-zero memory waste. vLLM achieves **96–99% GPU memory utilization** for KV cache, compared to 20–40% for traditional systems — enabling 2–4× more concurrent requests on identical hardware.
+
+</Callout>
+
+An additional benefit is **KV block sharing**. Multiple requests that share a common prefix (such as a long system prompt) can share the exact same physical KV blocks via a copy-on-write mechanism. This is particularly valuable for parallel sampling and beam search, where multiple output candidates share an identical prompt prefix.
+
+### PagedAttention vs Traditional Attention
+
+| Aspect | Traditional KV Cache | PagedAttention |
+| --- | --- | --- |
+| Memory allocation | Pre-allocated, max-length, contiguous | On-demand, paged, non-contiguous |
+| Internal fragmentation | 60–80% wasted | &lt;4% waste |
+| Memory sharing | Not supported | Copy-on-write block sharing |
+| GPU KV cache utilization | 20–40% | 96–99% |
+| Concurrent requests | Low (memory-limited) | 2–4× higher on same GPU |
+
+## Continuous Batching
+
+The second major innovation is **continuous batching** (also called iteration-level scheduling or in-flight batching). To understand it, we first need to look at the problem with traditional static batching.
+
+With *static batching*, the server groups incoming requests into a fixed-size batch and processes the entire batch to completion before accepting the next. Since LLM requests vary wildly in output length — one request might generate 10 tokens while another generates 500 — the shorter requests must sit idle, occupying GPU memory and blocking throughput while the longest request finishes.
+
+Continuous batching solves this with a simple but powerful insight: *new requests can be inserted into the running batch at every single decode step*. The scheduler operates as follows:
+
+1. Maintain a queue of waiting requests
+2. At each decode iteration (token step), check which running requests have finished
+3. Immediately replace finished requests with waiting ones from the queue
+4. The GPU executes a full forward pass each step — utilization approaches 100%
+
+<Callout type="green">
+
+⚡ Continuous batching alone can increase throughput by **10–23×** compared to static batching in high-concurrency scenarios (Orca paper, 2022).
+
+</Callout>
+
+## Quick Start
+
+Install vLLM with pip. You need CUDA 11.8+ and PyTorch 2.0+:
+
+```bash
+# Install vLLM
+pip install vllm
+```
+
+Offline batch inference — the simplest use case. PagedAttention and continuous batching are enabled automatically:
+
+```python
+from vllm import LLM, SamplingParams
+
+# Load model — PagedAttention is applied automatically
+llm = LLM(model="meta-llama/Llama-3.1-8B-Instruct")
+
+# Define decoding parameters
+sampling_params = SamplingParams(
+    temperature=0.7,
+    top_p=0.9,
+    max_tokens=256,
+)
+
+# All prompts are batched with continuous batching internally
+prompts = [
+    "Explain PagedAttention in one paragraph:",
+    "What are the main bottlenecks in LLM serving?",
+    "Compare vLLM and TGI for production deployment:",
+]
+
+outputs = llm.generate(prompts, sampling_params)
+
+for output in outputs:
+    prompt = output.prompt
+    generated_text = output.outputs[0].text
+    print(f"Prompt: {prompt!r}")
+    print(f"Output: {generated_text!r}")
+    print("---")
+```
+
+For production serving with an OpenAI-compatible API:
+
+```bash
+# Start the server (supports multi-GPU tensor parallelism)
+python -m vllm.entrypoints.openai.api_server \
+    --model meta-llama/Llama-3.1-8B-Instruct \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --tensor-parallel-size 2   # spread across 2 GPUs
+```
+
+```python
+# Query via the standard OpenAI client — no code changes needed
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="token",
+)
+
+completion = client.chat.completions.create(
+    model="meta-llama/Llama-3.1-8B-Instruct",
+    messages=[{"role": "user", "content": "What is PagedAttention?"}],
+)
+print(completion.choices[0].message.content)
+```
+
+## Performance Benchmarks
+
+The original vLLM paper (Kwon et al., SOSP 2023) measured serving throughput on an NVIDIA A10G GPU with LLaMA-13B across a range of concurrent request loads:
+
+| System | Relative Throughput | Batching Strategy | Notes |
+| --- | --- | --- | --- |
+| vLLM | 1.0× (reference) | Continuous | PagedAttention + continuous batching |
+| HuggingFace TGI | ~0.37× | Continuous (earlier version) | Without PagedAttention |
+| Orca (static) | ~0.12× | Static | Static batching reference |
+| HuggingFace Transformers | ~0.042× | None | Naive sequential inference (~24× slower) |
+
+In memory terms, PagedAttention reduces per-request GPU memory waste from 60–80% (fragmentation in traditional allocators) to under 4%, allowing vLLM to serve **2–4× more concurrent requests** on the same GPU hardware — directly translating to lower inference cost per token.
+
+## When Should You Use vLLM?
+
+vLLM shines in **high-concurrency production serving** scenarios:
+
+- API services handling many simultaneous users (&gt;10 concurrent)
+- Batch inference jobs with variable output lengths
+- Multi-GPU tensor-parallel serving of large models (70B+)
+- Use cases requiring parallel sampling or beam search
+- Structured output generation with guided decoding
+
+It may be overkill or suboptimal for:
+
+- Single-user local development — `llama.cpp` or Ollama are simpler
+- Edge / mobile deployment — too heavy a dependency
+- Research requiring custom attention patterns not yet supported upstream
+
+## Conclusion
+
+vLLM represents a fundamental shift in how we think about LLM memory management. By borrowing virtual memory concepts from OS design and applying them to the KV cache, it achieves near-perfect GPU memory utilization and orders-of-magnitude better throughput than naive approaches.
+
+If you're deploying LLMs in production, vLLM is the *starting point*, not an optimization. The gap between vLLM and unoptimized HuggingFace inference — up to 24× throughput — is too large to leave on the table at any meaningful scale. Understanding PagedAttention and continuous batching isn't just useful for operating vLLM; it's foundational knowledge for anyone building in the LLM systems space.
+
+<Callout>
+
+📌 Original paper: **"Efficient Memory Management for Large Language Model Serving with PagedAttention"**, Kwon et al., SOSP 2023. [arXiv:2309.06180](https://arxiv.org/abs/2309.06180)
+
+</Callout>

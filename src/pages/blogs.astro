@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+---
+
+<BaseLayout
+  title="Blog — The Anh Tran"
+  description="Technical blog by The Anh Tran — ML System Engineer writing about LLM inference, GPU optimization, and distributed systems."
+  ogDescription="Technical posts on LLM inference, GPU optimization, and distributed systems."
+>
+  <section id="blog-list">
+    <p class="section__text__p1">Browse My</p>
+    <h1 class="title">Blog Posts</h1>
+
+    <div class="blog-controls">
+      <div class="blog-search-wrap">
+        <input type="text" id="blog-search" class="blog-search-input" placeholder="Search posts..." autocomplete="off" />
+      </div>
+      <div class="blog-sort-wrap">
+        <span>Sort:</span>
+        <button class="sort-btn active" data-sort="newest" onclick="setBlogSort('newest')">Newest</button>
+        <button class="sort-btn" data-sort="oldest" onclick="setBlogSort('oldest')">Oldest</button>
+        <button class="sort-btn" data-sort="title" onclick="setBlogSort('title')">Title A–Z</button>
+      </div>
+    </div>
+
+    <div class="blog-grid" id="blog-grid">
+      {
+        posts.map((p) => (
+          <a
+            class="blog-card"
+            href={`/blogs/${p.id}.html`}
+            data-title={p.data.title}
+            data-date={iso(p.data.date)}
+            data-tags={p.data.tags.join(" ").toLowerCase()}
+          >
+            <div class="blog-card-img-wrap">
+              <img src={p.data.hero} alt={p.data.title} class="blog-card-img" />
+            </div>
+            <div class="blog-card-body">
+              <div class="blog-card-meta">
+                <span class="blog-date">{fmt(p.data.date)}</span>
+                <span class="blog-read-time">{p.data.readTime}</span>
+              </div>
+              <h2 class="blog-card-title">{p.data.title}</h2>
+              <p class="blog-card-excerpt">{p.data.description}</p>
+              <div class="blog-card-tags">
+                {p.data.tags.map((t) => <span class="blog-tag">{t}</span>)}
+              </div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <p class="blog-no-results" id="blog-no-results" style="display: none">
+      No posts found matching your search.
+    </p>
+    <div class="pagination-controls" id="blog-pagination"></div>
+  </section>
+
+  <script is:inline src="/js/blog-list.js" defer></script>
+</BaseLayout>

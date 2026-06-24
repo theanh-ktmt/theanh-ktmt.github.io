@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404 — Page Not Found · The Anh Tran" robots="noindex">
+  <section id="profile" style="min-height: 70vh; flex-direction: column; gap: 1rem;">
+    <div class="section__text">
+      <p class="section__text__p1">Error 404</p>
+      <h1 class="title">Page Not Found</h1>
+      <div class="intro-text" style="margin: 1rem auto;">
+        The page you're looking for doesn't exist or has moved.
+        Let's get you back on track.
+      </div>
+      <div class="btn-container">
+        <button class="btn btn-color-2" onclick="location.href='/'">Go Home</button>
+        <button class="btn btn-color-2" onclick="location.href='/blogs.html'">Read the Blog</button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

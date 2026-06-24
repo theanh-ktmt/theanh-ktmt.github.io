@@ -892,3 +892,56 @@
     border-color: var(--border);
     color: var(--text-muted);
 }
+
+/* ════════════════════════════════════════════════════════════
+   MARKDOWN-GENERATED CONTENT (Astro/MDX)
+   ════════════════════════════════════════════════════════════ */
+
+/* Tables authored as Markdown — mirror the old .blog-table look */
+.blog-post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 1.5rem 0;
+    border: 0.1rem solid rgb(163, 163, 163);
+}
+
+.blog-post-content thead th {
+    background: rgb(245, 245, 247);
+    text-align: left;
+    font-weight: 600;
+    color: rgb(35, 35, 35);
+    border-bottom: 0.1rem solid rgb(163, 163, 163);
+    padding: 0.85rem 1.25rem;
+}
+
+.blog-post-content tbody td {
+    padding: 0.7rem 1.25rem;
+    color: rgb(70, 70, 70);
+    border-bottom: 0.1rem solid rgb(225, 225, 225);
+    line-height: 1.55;
+}
+
+.blog-post-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+[data-theme="dark"] .blog-post-content table {
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .blog-post-content thead th {
+    background: var(--surface);
+    color: var(--text-strong);
+    border-bottom-color: var(--border);
+}
+
+[data-theme="dark"] .blog-post-content tbody td {
+    color: var(--text-muted);
+    border-bottom-color: var(--border-soft);
+}
+
+/* Shiki-highlighted fenced code — keep the prior dark code background */
+.blog-post-content pre.astro-code {
+    background: #12141e !important;
+}

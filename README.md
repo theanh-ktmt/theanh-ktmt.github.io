@@ -19,81 +19,80 @@ Personal portfolio website of **The Anh Tran** — ML System Engineer specializi
 
 ## Blog
 
-Blog posts live under `blogs/`. Each post is a standalone HTML page.
+Posts are **MDX** files under `src/content/blog/`. Prose is Markdown; the
+custom bits (callouts, figures) are components, and code blocks are
+highlighted at build time by Shiki.
 
 | File | Title |
 |------|-------|
-| `blogs/speculative-decoding.html` | Speculative Decoding: Faster LLM Inference with Zero Quality Loss |
-| `blogs/vllm-intro.html` | vLLM: A Deep Dive into High-Throughput LLM Serving |
+| `src/content/blog/speculative-decoding.mdx` | Speculative Decoding: Faster LLM Inference with Zero Quality Loss |
+| `src/content/blog/vllm-intro.mdx` | vLLM: A Deep Dive into High-Throughput LLM Serving |
 
 **To add a new post:**
-1. Create `blogs/<slug>.html` (copy `vllm-intro.html` as a template)
-2. Put the post's images in their own folder: `assets/blogs/<slug>/` (e.g. `hero.svg`, plus any figures)
-3. Add a card entry in `blogs.html` with `data-title`, `data-date`, and `data-tags` attributes
-4. Add the post URL to `sitemap.xml`
+1. Create `src/content/blog/<slug>.mdx` with frontmatter (`title`, `description`, `date`, `tags`, `readTime`, `hero`, …) — the schema is in `src/content.config.ts`.
+2. Put the post's images in `public/assets/blogs/<slug>/` (referenced as `/assets/blogs/<slug>/…`).
+3. Write the body in Markdown; use `<Callout type="blue|green">` and `<Figure src caption narrow />` for the rich bits, and fenced code blocks for code.
+4. Add the post URL to `public/sitemap.xml`.
 
-> The nav, footer, theme toggle, and shared scripts come from `/partials/` + `/js/site.js`, so you don't copy them into each post.
+The listing card and the `/blogs/<slug>.html` page are generated automatically from the collection — nothing else to wire up.
 
 ## Tech Stack
 
-- Pure HTML / CSS / JavaScript — no frameworks, no bundler
-- **Shared layout via JS includes** — `partials/nav.html` + `partials/footer.html` are fetched and injected by `js/site.js`, so the nav/footer are edited in one place
-- **Dark / light theme** — CSS variables + `[data-theme]`; a system-aware, persisted toggle lives in the nav. A pre-paint inline snippet in each `<head>` avoids theme flash
+- **[Astro](https://astro.build)** static site generator (no client framework) — components render to plain HTML, ships almost no JS
+- **MDX blog** via content collections (`src/content/blog`), Shiki code highlighting (`one-dark-pro`)
+- **Existing CSS kept verbatim** in `src/styles/` (global design system + theme tokens + dark overrides)
+- **Shared layout** — `Nav` / `Footer` / `Callout` / `Figure` components + `BaseLayout` / `BlogPost` layouts (edit once)
+- **Dark / light theme** — CSS variables + `[data-theme]`; system-aware persisted toggle, dark by default, with a pre-paint inline snippet to avoid flash
 - **Effects** — IntersectionObserver scroll-reveal, scrollspy active-nav, reading-progress bar, back-to-top (all respect `prefers-reduced-motion`)
-- **Comments** — [giscus](https://giscus.app) (GitHub Discussions), themed to match and synced with the toggle
-- **SEO** — per-page meta/OG/Twitter, JSON-LD `Person`, `sitemap.xml`, `robots.txt`, custom `404.html`
-- `style.css` — global design system + theme tokens; `mediaqueries.css` — responsive; `blogs.css` — blog styles
-- `script.js` — home-page-only behaviors (carousel, honors/activities pagination & sort)
-- Deployed via **GitHub Actions** → **GitHub Pages**
+- **Comments** — [giscus](https://giscus.app) (GitHub Discussions), themed and synced with the toggle (config in `src/scripts/site.js`)
+- **SEO** — per-page meta/OG/Twitter, JSON-LD `Person`, `public/sitemap.xml`, `public/robots.txt`, custom `404`
+- URLs preserved via `build.format: "file"` (e.g. `/blogs.html`, `/blogs/<slug>.html`)
 
 ## Project Structure
 
 ```
-├── index.html          # Main portfolio page
-├── blogs.html          # Blog listing page (search, sort, pagination)
-├── 404.html            # Custom not-found page
-├── blogs/
-│   ├── speculative-decoding.html
-│   └── vllm-intro.html
-├── partials/
-│   ├── nav.html        # Shared nav (injected on every page)
-│   └── footer.html     # Shared footer
-├── js/
-│   └── site.js         # Includes loader, theme, menu, scrollspy, reveal, giscus
-├── script.js           # Home-page behaviors (carousel, pagination)
-├── style.css           # Global styles + theme tokens + dark overrides
-├── mediaqueries.css    # Responsive styles
-├── blogs.css           # Blog styles (+ dark overrides)
-├── sitemap.xml · robots.txt · .nojekyll
-└── assets/
-    ├── blogs/<slug>/   # One image subfolder per post
-    ├── profile-pic.png
-    └── ...
+├── astro.config.mjs        # site, build.format:"file", mdx, shiki
+├── src/
+│   ├── pages/
+│   │   ├── index.astro      # Home (all sections)
+│   │   ├── blogs.astro      # Blog listing (search/sort/pagination)
+│   │   ├── blogs/[...slug].astro  # Post pages from the collection
+│   │   └── 404.astro
+│   ├── layouts/             # BaseLayout, BlogPost
+│   ├── components/          # Nav, Footer, Callout, Figure
+│   ├── content/blog/        # *.mdx posts  (+ content.config.ts schema)
+│   ├── scripts/site.js      # theme, menu, scrollspy, reveal, giscus
+│   └── styles/              # style.css, mediaqueries.css, blogs.css
+├── public/                  # served as-is at site root
+│   ├── assets/blogs/<slug>/ # one image folder per post
+│   ├── js/                  # home.js, blog-list.js (classic global scripts)
+│   ├── sitemap.xml · robots.txt · .nojekyll
+└── .github/workflows/deploy.yml   # build → upload dist → Pages
 ```
 
-## Comments (giscus) setup
+## Comments (giscus)
 
-Comments use GitHub Discussions via giscus. They show a "not configured" note until you:
-
-1. Make the repo public (already is) and enable **Discussions** (repo → Settings → General → Features)
-2. Install the **giscus app**: <https://github.com/apps/giscus>
-3. Visit <https://giscus.app>, enter the repo, and copy the generated `data-repo-id` and `data-category-id`
-4. Paste them into the `GISCUS` config at the top of `js/site.js`
+Configured in the `GISCUS` block at the top of `src/scripts/site.js`
+(repo / repo-id / category / category-id). To re-point it, regenerate the
+IDs at <https://giscus.app> and ensure the [giscus app](https://github.com/apps/giscus)
+is installed on the repo.
 
 ## Local Development
 
 ```bash
 git clone https://github.com/theanh-ktmt/theanh-ktmt.github.io.git
 cd theanh-ktmt.github.io
+npm install
 
-# Serve over http (required — the JS includes use fetch(), which
-# does not work from file://).
-npx serve .
+npm run dev       # local dev server with HMR
+npm run build     # production build to ./dist
+npm run preview   # preview the built site
 ```
 
 ## Deployment
 
-Every push to `main` triggers the GitHub Actions workflow (`.github/workflows/deploy.yml`) which deploys the site automatically to GitHub Pages.
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds the
+Astro site (`npm ci && npm run build`) and publishes `dist/` to GitHub Pages.
 
 ---
 

@@ -1,0 +1,70 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
+  readTime: string;
+  hero: string;
+  heroAlt?: string;
+  ogImage?: string;
+  ogDescription?: string;
+}
+
+const { title, description, date, tags, readTime, hero, heroAlt, ogImage, ogDescription } =
+  Astro.props;
+
+const dateStr = date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout
+  title={`${title} — The Anh Tran`}
+  description={description}
+  ogType="article"
+  ogTitle={title}
+  ogDescription={ogDescription ?? description}
+  ogImage={ogImage ?? hero}
+>
+  <div class="blog-post-page">
+    <a href="/blogs.html" class="blog-post-back">&#8592; Back to Blog</a>
+
+    <div class="blog-post-hero-wrap">
+      <img src={hero} alt={heroAlt ?? title} class="blog-post-hero" />
+    </div>
+
+    <header class="blog-post-header">
+      <div class="blog-card-tags">
+        {tags.map((t) => <span class="blog-tag">{t}</span>)}
+      </div>
+      <h1 class="blog-post-title">{title}</h1>
+      <div class="blog-post-meta">
+        <span class="blog-post-author">The Anh Tran</span>
+        <span class="blog-date">{dateStr}</span>
+        <span class="blog-read-time">{readTime}</span>
+      </div>
+    </header>
+
+    <div class="blog-post-content">
+      <slot />
+    </div>
+
+    <div class="blog-post-footer">
+      <div class="copy-link-bar">
+        <p>Found this useful? Share it with your team.</p>
+        <button class="copy-btn" type="button">&#128279;&nbsp; Copy Link</button>
+      </div>
+
+      <section class="blog-comments">
+        <h2 class="blog-comments-title">Comments</h2>
+        <p class="blog-comments-note">Sign in with GitHub to leave a comment.</p>
+        <div id="giscus-container"></div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
