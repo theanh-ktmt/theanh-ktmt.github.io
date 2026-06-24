@@ -729,3 +729,161 @@
         font-size: 0.83rem;
     }
 }
+
+/* ════════════════════════════════════════════════════════════
+   DARK THEME — BLOG SURFACES
+   ════════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] .blog-card {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .blog-card:hover {
+    border-color: var(--text-faint);
+    box-shadow: 0 8px 32px var(--shadow-strong);
+}
+
+[data-theme="dark"] .blog-card-title {
+    color: var(--text-strong);
+}
+
+[data-theme="dark"] .blog-card-excerpt {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .blog-date,
+[data-theme="dark"] .blog-read-time,
+[data-theme="dark"] .blog-card-meta,
+[data-theme="dark"] .blog-post-meta,
+[data-theme="dark"] .blog-post-author,
+[data-theme="dark"] .blog-figure figcaption,
+[data-theme="dark"] .blog-no-results,
+[data-theme="dark"] .blog-comments-note {
+    color: var(--text-faint);
+}
+
+[data-theme="dark"] .blog-tag {
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .blog-search-input {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+[data-theme="dark"] .blog-search-input:focus {
+    border-color: var(--text-faint);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .blog-post-title,
+[data-theme="dark"] .blog-comments-title,
+[data-theme="dark"] .td-highlight {
+    color: var(--text-strong);
+}
+
+[data-theme="dark"] .blog-post-content {
+    color: var(--text);
+}
+
+[data-theme="dark"] .blog-post-content h2 {
+    border-bottom-color: var(--border-soft);
+}
+
+[data-theme="dark"] .blog-post-content p,
+[data-theme="dark"] .blog-post-content li {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .blog-post-content strong,
+[data-theme="dark"] .blog-post-content a {
+    color: var(--text-strong);
+}
+
+[data-theme="dark"] .blog-post-content p code,
+[data-theme="dark"] .blog-post-content li code {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-strong);
+    border-color: var(--border);
+}
+
+/* Frame the white-background figures so they read as intentional on dark */
+[data-theme="dark"] .blog-figure img {
+    border: 0.1rem solid var(--border);
+}
+
+[data-theme="dark"] .blog-callout {
+    background: var(--surface);
+    border-left-color: var(--text-faint);
+}
+
+[data-theme="dark"] .blog-table-wrap {
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .blog-table th {
+    background: var(--surface);
+    color: var(--text-strong);
+    border-bottom-color: var(--border);
+}
+
+[data-theme="dark"] .blog-table td {
+    color: var(--text-muted);
+    border-bottom-color: var(--border-soft);
+}
+
+[data-theme="dark"] .blog-table tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .copy-link-bar p {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .copy-btn {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
+}
+
+[data-theme="dark"] .copy-btn:hover {
+    background: var(--text-strong);
+}
+
+[data-theme="dark"] .comment-input,
+[data-theme="dark"] .comment-textarea {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+[data-theme="dark"] .blog-post-footer,
+[data-theme="dark"] .blog-comments {
+    border-top-color: var(--border);
+}
+
+/* Comments (giscus) */
+#giscus-container {
+    margin-top: 1rem;
+}
+
+.comments-setup-note {
+    font-size: 0.9rem;
+    color: rgb(120, 120, 120);
+    background: rgb(247, 247, 249);
+    border: 0.1rem solid rgb(225, 225, 225);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    line-height: 1.6;
+}
+
+[data-theme="dark"] .comments-setup-note {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text-muted);
+}
