@@ -110,7 +110,7 @@
       ".blog-card",
       ".blog-post-content > h2",
       ".blog-post-content > .blog-figure",
-      ".blog-post-content > .blog-table-wrap",
+      ".blog-post-content > table",
       ".blog-post-content > pre",
     ].join(",");
     var els = Array.prototype.slice.call(document.querySelectorAll(SEL));

@@ -43,7 +43,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
             data-tags={p.data.tags.join(" ").toLowerCase()}
           >
             <div class="blog-card-img-wrap">
-              <img src={p.data.hero} alt={p.data.title} class="blog-card-img" />
+              <img src={p.data.hero} alt={p.data.title} class="blog-card-img" loading="lazy" decoding="async" />
             </div>
             <div class="blog-card-body">
               <div class="blog-card-meta">
