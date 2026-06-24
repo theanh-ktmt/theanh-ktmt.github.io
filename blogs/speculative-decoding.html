@@ -5,6 +5,16 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem("theme") ||
+                    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+                document.documentElement.setAttribute("data-theme", t);
+            } catch (e) { }
+        })();
+    </script>
     <title>
         Speculative Decoding: Faster LLM Inference with Zero Quality Loss — The Anh Tran
     </title>
@@ -21,48 +31,9 @@
 </head>
 
 <body>
-    <!-- Desktop Nav -->
-    <nav id="desktop-nav">
-        <div class="logo">
-            <a href="../" class="logo-link">The Anh Tran</a>
-        </div>
-        <div>
-            <ul class="nav-links">
-                <li><a href="../#about">About</a></li>
-                <li><a href="../#projects">Projects</a></li>
-                <li><a href="../#honors">Honors</a></li>
-                <li><a href="../#activities">Activities</a></li>
-                <li><a href="../#contact">Contact</a></li>
-                <li class="nav-blog-sep">
-                    <a href="../blogs.html" class="nav-active">Blog</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Hamburger Nav -->
-    <nav id="hamburger-nav">
-        <div class="logo">
-            <a href="../" class="logo-link">The Anh Tran</a>
-        </div>
-        <div class="hamburger-menu">
-            <div class="hamburger-icon" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="menu-links">
-                <li><a href="../#about" onclick="toggleMenu()">About</a></li>
-                <li><a href="../#projects" onclick="toggleMenu()">Projects</a></li>
-                <li><a href="../#honors" onclick="toggleMenu()">Honors</a></li>
-                <li>
-                    <a href="../#activities" onclick="toggleMenu()">Activities</a>
-                </li>
-                <li><a href="../#contact" onclick="toggleMenu()">Contact</a></li>
-                <li><a href="../blogs.html" onclick="toggleMenu()">Blog</a></li>
-            </div>
-        </div>
-    </nav>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div data-include="/partials/nav.html"></div>
+    <main id="main">
 
     <!-- Blog Post -->
     <div class="blog-post-page">
@@ -981,21 +952,8 @@ llm = <span class="token-class">LLM</span>(
             <!-- Comments -->
             <section class="blog-comments">
                 <h2 class="blog-comments-title">Comments</h2>
-                <p class="blog-comments-note">Share your thoughts about this post.</p>
-                <form class="comment-form" onsubmit="return false;">
-                    <div class="comment-form-row">
-                        <input type="text" placeholder="Your name" class="comment-input" autocomplete="name" />
-                        <input type="email" placeholder="Your email (not published)" class="comment-input"
-                            autocomplete="email" />
-                    </div>
-                    <textarea class="comment-textarea" placeholder="Write a comment..." rows="5"></textarea>
-                    <div class="comment-form-footer">
-                        <button class="btn btn-disabled comment-submit" disabled title="Comment system coming soon">
-                            Post Comment
-                        </button>
-                        <span class="comment-coming-soon">Comment system coming soon</span>
-                    </div>
-                </form>
+                <p class="blog-comments-note">Sign in with GitHub to leave a comment.</p>
+                <div id="giscus-container"></div>
             </section>
         </div>
     </div>
@@ -1006,80 +964,10 @@ llm = <span class="token-class">LLM</span>(
         &#10003;&nbsp; Link copied to clipboard!
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-top">
-            <div class="footer-brand">The Anh Tran</div>
-            <p class="footer-tagline">
-                ML System Engineer · LLM Inference · GPU Optimization
-            </p>
-        </div>
-        <nav>
-            <div class="nav-links-container">
-                <ul class="nav-links">
-                    <li><a href="../#about">About</a></li>
-                    <li><a href="../#projects">Projects</a></li>
-                    <li><a href="../#honors">Honors</a></li>
-                    <li><a href="../#activities">Activities</a></li>
-                    <li><a href="../#contact">Contact</a></li>
-                    <li class="footer-blog-sep"><a href="../blogs.html">Blog</a></li>
-                </ul>
-            </div>
-        </nav>
-        <div class="footer-socials">
-            <img src="../assets/github.png" alt="GitHub" class="icon footer-icon"
-                onclick="location.href = 'https://github.com/theanh-ktmt'" />
-            <img src="../assets/linkedin.png" alt="LinkedIn" class="icon footer-icon"
-                onclick="location.href = 'https://www.linkedin.com/in/theanh-ktmt/'" />
-            <img src="../assets/email.png" alt="Email" class="icon footer-icon footer-email-icon"
-                onclick="location.href = 'mailto:trantheanh.ktmt@gmail.com'" />
-        </div>
-        <p class="footer-copy">
-            Copyright &#169; 2026 The Anh Tran. All Rights Reserved.
-        </p>
-    </footer>
+    </main>
+    <div data-include="/partials/footer.html"></div>
 
-    <script>
-        function toggleMenu() {
-            document.querySelector(".menu-links").classList.toggle("open");
-            document.querySelector(".hamburger-icon").classList.toggle("open");
-        }
-
-        function copyPostLink() {
-            var url = window.location.href;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard
-                    .writeText(url)
-                    .then(showToast)
-                    .catch(function () {
-                        fallbackCopy(url);
-                    });
-            } else {
-                fallbackCopy(url);
-            }
-        }
-
-        function fallbackCopy(text) {
-            var el = document.createElement("textarea");
-            el.value = text;
-            el.style.cssText = "position:fixed;opacity:0;pointer-events:none;";
-            document.body.appendChild(el);
-            el.select();
-            try {
-                document.execCommand("copy");
-                showToast();
-            } catch (e) { }
-            document.body.removeChild(el);
-        }
-
-        function showToast() {
-            var toast = document.getElementById("copy-toast");
-            toast.classList.add("show");
-            setTimeout(function () {
-                toast.classList.remove("show");
-            }, 2500);
-        }
-    </script>
+    <script src="/js/site.js" defer></script>
 </body>
 
 </html>

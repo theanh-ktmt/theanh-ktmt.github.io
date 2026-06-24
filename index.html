@@ -5,44 +5,66 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <!-- Set theme before paint to avoid a flash of the wrong theme -->
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem("theme") ||
+                    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+                document.documentElement.setAttribute("data-theme", t);
+            } catch (e) { }
+        })();
+    </script>
     <title>The Anh Tran — ML System Engineer</title>
+    <meta name="description"
+        content="The Anh Tran — ML System Engineer specializing in LLM inference optimization, GPU performance engineering, and distributed AI systems." />
+    <meta name="author" content="The Anh Tran" />
+    <link rel="canonical" href="https://theanh-ktmt.github.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Anh Tran — ML System Engineer" />
+    <meta property="og:description"
+        content="LLM inference optimization, GPU performance engineering, and distributed AI systems." />
+    <meta property="og:url" content="https://theanh-ktmt.github.io/" />
+    <meta property="og:image" content="https://theanh-ktmt.github.io/assets/profile-pic.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="The Anh Tran — ML System Engineer" />
+    <meta name="twitter:description"
+        content="LLM inference optimization, GPU performance engineering, and distributed AI systems." />
+    <meta name="twitter:image" content="https://theanh-ktmt.github.io/assets/profile-pic.png" />
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="mediaqueries.css" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "The Anh Tran",
+      "url": "https://theanh-ktmt.github.io/",
+      "jobTitle": "ML System Engineer",
+      "email": "mailto:trantheanh.ktmt@gmail.com",
+      "sameAs": [
+        "https://github.com/theanh-ktmt",
+        "https://www.linkedin.com/in/theanh-ktmt/"
+      ],
+      "knowsAbout": [
+        "LLM Inference Optimization",
+        "GPU Performance Engineering",
+        "Distributed Inference",
+        "CUDA",
+        "vLLM"
+      ],
+      "alumniOf": "Hanoi University of Science and Technology"
+    }
+    </script>
 </head>
 
 <body>
-    <nav id="desktop-nav">
-        <div class="logo">The Anh Tran</div>
-        <div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#honors">Honors</a></li>
-                <li><a href="#activities">Activities</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li class="nav-blog-sep"><a href="./blogs.html">Blog</a></li>
-            </ul>
-        </div>
-    </nav>
-    <nav id="hamburger-nav">
-        <div class="logo">The Anh Tran</div>
-        <div class="hamburger-menu">
-            <div class="hamburger-icon" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="menu-links">
-                <li><a href="#about" onclick="toggleMenu()">About</a></li>
-                <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
-                <li><a href="#honors" onclick="toggleMenu()">Honors</a></li>
-                <li><a href="#activities" onclick="toggleMenu()">Activities</a></li>
-                <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
-                <li><a href="./blogs.html" onclick="toggleMenu()">Blog</a></li>
-            </div>
-        </div>
-    </nav>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div data-include="/partials/nav.html"></div>
+    <main id="main">
     <section id="profile">
         <div class="section__pic-container">
             <img src="./assets/profile-pic.png" alt="The Anh Tran profile picture" class="avatar-rounded" />
@@ -308,34 +330,10 @@
             </div>
         </div>
     </section>
-    <footer>
-        <div class="footer-top">
-            <div class="footer-brand">The Anh Tran</div>
-            <p class="footer-tagline">ML System Engineer · LLM Inference · GPU Optimization</p>
-        </div>
-        <nav>
-            <div class="nav-links-container">
-                <ul class="nav-links">
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#honors">Honors</a></li>
-                    <li><a href="#activities">Activities</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li class="footer-blog-sep"><a href="./blogs.html">Blog</a></li>
-                </ul>
-            </div>
-        </nav>
-        <div class="footer-socials">
-            <img src="./assets/github.png" alt="GitHub" class="icon footer-icon"
-                onclick="location.href='https://github.com/theanh-ktmt'" />
-            <img src="./assets/linkedin.png" alt="LinkedIn" class="icon footer-icon"
-                onclick="location.href='https://www.linkedin.com/in/theanh-ktmt/'" />
-            <img src="./assets/email.png" alt="Email" class="icon footer-icon footer-email-icon"
-                onclick="location.href='mailto:trantheanh.ktmt@gmail.com'" />
-        </div>
-        <p class="footer-copy">Copyright &#169; 2026 The Anh Tran. All Rights Reserved.</p>
-    </footer>
-    <script src="script.js"></script>
+    </main>
+    <div data-include="/partials/footer.html"></div>
+    <script src="/js/site.js" defer></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
