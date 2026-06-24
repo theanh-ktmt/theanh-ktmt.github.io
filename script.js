@@ -1,8 +1,6 @@
-// ── Hamburger Menu ─────────────────────────────────────────
-function toggleMenu() {
-  document.querySelector(".menu-links").classList.toggle("open");
-  document.querySelector(".hamburger-icon").classList.toggle("open");
-}
+// Page-specific behaviors for the home page (carousel, honors &
+// activities pagination/sort). Shared behaviors — nav, footer, theme,
+// mobile menu, scrollspy, reveal — live in /js/site.js.
 
 // ── Projects Carousel ───────────────────────────────────────
 let _ci = 0,
@@ -147,95 +145,3 @@ document.addEventListener("DOMContentLoaded", () => {
   initHonorsPagination();
   initActivitiesPagination();
 });
-
-// ── Scroll-Snap Navigation ────────────────────────────────────
-(function () {
-  var SECTIONS = [
-    "profile",
-    "about",
-    "projects",
-    "publications",
-    "honors",
-    "activities",
-    "contact",
-  ];
-  var locked = false;
-
-  function isDesktop() {
-    return window.innerWidth > 1200;
-  }
-
-  function currentIdx() {
-    var best = 0,
-      bestDist = Infinity;
-    SECTIONS.forEach(function (id, i) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      var dist = Math.abs(el.getBoundingClientRect().top);
-      if (dist < bestDist) {
-        bestDist = dist;
-        best = i;
-      }
-    });
-    return best;
-  }
-
-  function snapTo(idx) {
-    idx = Math.max(0, Math.min(SECTIONS.length - 1, idx));
-    var el = document.getElementById(SECTIONS[idx]);
-    if (!el) return;
-    locked = true;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-    setTimeout(function () {
-      locked = false;
-    }, 900);
-  }
-
-  window.addEventListener(
-    "wheel",
-    function (e) {
-      if (!isDesktop() || locked) return;
-      e.preventDefault();
-      snapTo(currentIdx() + (e.deltaY > 0 ? 1 : -1));
-    },
-    { passive: false },
-  );
-
-  var _touchY = 0;
-  window.addEventListener(
-    "touchstart",
-    function (e) {
-      _touchY = e.touches[0].clientY;
-    },
-    { passive: true },
-  );
-
-  window.addEventListener(
-    "touchend",
-    function (e) {
-      if (!isDesktop() || locked) return;
-      var diff = _touchY - e.changedTouches[0].clientY;
-      if (Math.abs(diff) < 40) return;
-      snapTo(currentIdx() + (diff > 0 ? 1 : -1));
-    },
-    { passive: true },
-  );
-
-  window.addEventListener("keydown", function (e) {
-    if (!isDesktop() || locked) return;
-    var idx = currentIdx();
-    if (e.key === "ArrowDown" || e.key === "PageDown") {
-      e.preventDefault();
-      snapTo(idx + 1);
-    } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-      e.preventDefault();
-      snapTo(idx - 1);
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      snapTo(0);
-    } else if (e.key === "End") {
-      e.preventDefault();
-      snapTo(SECTIONS.length - 1);
-    }
-  });
-})();
