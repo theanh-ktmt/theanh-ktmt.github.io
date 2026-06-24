@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" font-family="Poppins, Segoe UI, sans-serif">
+  <rect width="1000" height="300" fill="#ffffff"/>
+
+  <!-- timeline spine -->
+  <line x1="50" y1="178" x2="958" y2="178" stroke="#dde1e9" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- ===== Nodes 1-4 (green) ===== -->
+  <!-- Standard -->
+  <circle cx="90" cy="178" r="11" fill="#14b884"/>
+  <text x="90" y="222" text-anchor="middle" font-size="21" font-weight="600" fill="#14b884">Standard</text>
+  <text x="90" y="250" text-anchor="middle" font-size="14.5" fill="#6b7280">Independent small</text>
+  <text x="90" y="270" text-anchor="middle" font-size="14.5" fill="#6b7280">model</text>
+
+  <!-- Medusa -->
+  <circle cx="300" cy="178" r="11" fill="#14b884"/>
+  <text x="300" y="222" text-anchor="middle" font-size="21" font-weight="600" fill="#14b884">Medusa</text>
+  <text x="300" y="250" text-anchor="middle" font-size="14.5" fill="#6b7280">Multi-Head Attention</text>
+
+  <!-- EAGLE-1 -->
+  <circle cx="510" cy="178" r="11" fill="#14b884"/>
+  <text x="510" y="222" text-anchor="middle" font-size="21" font-weight="600" fill="#14b884">EAGLE-1</text>
+  <text x="510" y="250" text-anchor="middle" font-size="14.5" fill="#6b7280">Autoregressive</text>
+  <text x="510" y="270" text-anchor="middle" font-size="14.5" fill="#6b7280">Drafting</text>
+
+  <!-- EAGLE-2/3 -->
+  <circle cx="700" cy="178" r="11" fill="#14b884"/>
+  <text x="700" y="222" text-anchor="middle" font-size="21" font-weight="600" fill="#14b884">EAGLE-2/3</text>
+  <text x="700" y="250" text-anchor="middle" font-size="14.5" fill="#6b7280">Dynamic Trees /</text>
+  <text x="700" y="270" text-anchor="middle" font-size="14.5" fill="#6b7280">Simulated</text>
+
+  <!-- ===== DeepSeek MTP (indigo, highlighted box) ===== -->
+  <circle cx="928" cy="178" r="11" fill="#5b63e6"/>
+  <!-- dashed connector from box down to node -->
+  <path d="M905 118 C 905 150, 920 150, 926 166" fill="none" stroke="#5b63e6" stroke-width="2" stroke-dasharray="5,5"/>
+  <!-- box -->
+  <rect x="724" y="26" width="256" height="92" rx="15" fill="#ffffff" stroke="#5b63e6" stroke-width="2"/>
+  <text x="748" y="66" font-size="19" font-weight="500" fill="#5b63e6">DeepSeek MTP</text>
+  <text x="748" y="98" font-size="23" font-weight="700" fill="#1a1a1a">Pre-trained Backbone</text>
+</svg>

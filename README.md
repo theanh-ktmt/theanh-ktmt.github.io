@@ -23,11 +23,13 @@ Blog posts live under `blogs/`. Each post is a standalone HTML page.
 
 | File | Title |
 |------|-------|
+| `blogs/speculative-decoding.html` | Speculative Decoding: Faster LLM Inference with Zero Quality Loss |
 | `blogs/vllm-intro.html` | vLLM: A Deep Dive into High-Throughput LLM Serving |
 
 **To add a new post:**
 1. Create `blogs/<slug>.html` (copy `vllm-intro.html` as a template)
-2. Add a card entry in `blogs.html` with `data-title`, `data-date`, and `data-tags` attributes
+2. Put the post's images in their own folder: `assets/blogs/<slug>/` (e.g. `hero.svg`, plus any figures)
+3. Add a card entry in `blogs.html` with `data-title`, `data-date`, and `data-tags` attributes
 
 ## Tech Stack
 
@@ -44,14 +46,19 @@ Blog posts live under `blogs/`. Each post is a standalone HTML page.
 ├── index.html          # Main portfolio page
 ├── blogs.html          # Blog listing page (search, sort, pagination)
 ├── blogs/
+│   ├── speculative-decoding.html # Blog post: Speculative Decoding survey
 │   └── vllm-intro.html # Blog post: vLLM introduction
 ├── style.css           # Global styles
 ├── mediaqueries.css    # Responsive styles
 ├── blogs.css           # Blog styles
 ├── script.js           # Portfolio JS (carousel, pagination, scroll-snap)
 └── assets/
-    ├── blogs/
-    │   └── vllm-hero.svg   # Hero image for vLLM post
+    ├── blogs/                       # One subfolder per post, named after its slug
+    │   ├── vllm-intro/
+    │   │   └── hero.svg
+    │   └── speculative-decoding/
+    │       ├── hero.svg
+    │       └── ...                  # figures (architectures, benchmarks, diagrams)
     ├── profile-pic.png
     └── ...
 ```
