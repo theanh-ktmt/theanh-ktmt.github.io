@@ -437,49 +437,6 @@
     line-height: 1.7;
 }
 
-/* Data table */
-.blog-table-wrap {
-    overflow-x: auto;
-    margin: 1.5rem 0;
-    border-radius: 1rem;
-    border: 0.1rem solid rgb(163, 163, 163);
-}
-
-.blog-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-
-.blog-table th {
-    background: rgb(245, 245, 247);
-    padding: 0.85rem 1.25rem;
-    text-align: left;
-    font-weight: 600;
-    color: rgb(35, 35, 35);
-    border-bottom: 0.1rem solid rgb(163, 163, 163);
-    white-space: nowrap;
-}
-
-.blog-table td {
-    padding: 0.7rem 1.25rem;
-    color: rgb(70, 70, 70);
-    border-bottom: 0.1rem solid rgb(225, 225, 225);
-    line-height: 1.55;
-}
-
-.blog-table tr:last-child td {
-    border-bottom: none;
-}
-
-.blog-table tbody tr:hover td {
-    background: rgb(249, 249, 250);
-}
-
-.td-highlight {
-    font-weight: 600;
-    color: rgb(25, 25, 25);
-}
 
 /* Inline figures / diagrams */
 .blog-figure {
@@ -725,8 +682,8 @@
         padding: 1rem 1.1rem;
     }
 
-    .blog-table th,
-    .blog-table td {
+    .blog-post-content thead th,
+    .blog-post-content tbody td {
         padding: 0.65rem 0.9rem;
         font-size: 0.83rem;
     }
@@ -784,8 +741,7 @@
 }
 
 [data-theme="dark"] .blog-post-title,
-[data-theme="dark"] .blog-comments-title,
-[data-theme="dark"] .td-highlight {
+[data-theme="dark"] .blog-comments-title {
     color: var(--text-strong);
 }
 
@@ -827,25 +783,6 @@
 [data-theme="dark"] .blog-callout {
     background: var(--surface);
     border-left-color: var(--text-faint);
-}
-
-[data-theme="dark"] .blog-table-wrap {
-    border-color: var(--border);
-}
-
-[data-theme="dark"] .blog-table th {
-    background: var(--surface);
-    color: var(--text-strong);
-    border-bottom-color: var(--border);
-}
-
-[data-theme="dark"] .blog-table td {
-    color: var(--text-muted);
-    border-bottom-color: var(--border-soft);
-}
-
-[data-theme="dark"] .blog-table tbody tr:hover td {
-    background: rgba(255, 255, 255, 0.03);
 }
 
 [data-theme="dark"] .copy-link-bar p {

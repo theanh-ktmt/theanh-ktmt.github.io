@@ -32,9 +32,8 @@ highlighted at build time by Shiki.
 1. Create `src/content/blog/<slug>.mdx` with frontmatter (`title`, `description`, `date`, `tags`, `readTime`, `hero`, …) — the schema is in `src/content.config.ts`.
 2. Put the post's images in `public/assets/blogs/<slug>/` (referenced as `/assets/blogs/<slug>/…`).
 3. Write the body in Markdown; use `<Callout type="blue|green">` and `<Figure src caption narrow />` for the rich bits, and fenced code blocks for code.
-4. Add the post URL to `public/sitemap.xml`.
 
-The listing card and the `/blogs/<slug>.html` page are generated automatically from the collection — nothing else to wire up.
+The listing card, the `/blogs/<slug>.html` page, the sitemap, and the RSS feed are all generated automatically from the collection — nothing else to wire up.
 
 ## Tech Stack
 
@@ -45,7 +44,8 @@ The listing card and the `/blogs/<slug>.html` page are generated automatically f
 - **Dark / light theme** — CSS variables + `[data-theme]`; system-aware persisted toggle, dark by default, with a pre-paint inline snippet to avoid flash
 - **Effects** — IntersectionObserver scroll-reveal, scrollspy active-nav, reading-progress bar, back-to-top (all respect `prefers-reduced-motion`)
 - **Comments** — [giscus](https://giscus.app) (GitHub Discussions), themed and synced with the toggle (config in `src/scripts/site.js`)
-- **SEO** — per-page meta/OG/Twitter, JSON-LD `Person`, `public/sitemap.xml`, `public/robots.txt`, custom `404`
+- **SEO / discovery** — per-page meta/OG/Twitter, JSON-LD `Person`, auto sitemap (`@astrojs/sitemap`), RSS feed (`/rss.xml`), `robots.txt`, custom `404`
+- **Performance** — link prefetch on hover, lazy-loaded images, optimized assets
 - URLs preserved via `build.format: "file"` (e.g. `/blogs.html`, `/blogs/<slug>.html`)
 
 ## Project Structure

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://theanh-ktmt.github.io/sitemap.xml
+Sitemap: https://theanh-ktmt.github.io/sitemap-index.xml
