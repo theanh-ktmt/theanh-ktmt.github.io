@@ -129,6 +129,7 @@ The original formulation (Leviathan et al., 2022) uses an **independent small mo
 <Figure
   src="/assets/blogs/speculative-decoding/algorithm.png"
   alt="Algorithm 1: SpeculativeDecodingStep pseudocode showing drafting, parallel scoring, acceptance test, and residual correction"
+  narrow
   caption={`Figure 4 — The core algorithm. The draft samples γ guesses; the target scores them in parallel; each is accepted with probability <code>min(1, pᵢ/qᵢ)</code>; and on the first rejection a token is resampled from the corrected residual <code>p'(x)</code>. This is the step that guarantees the output matches the target's distribution.`}
 />
 
