@@ -16,7 +16,7 @@
     repo: "theanh-ktmt/theanh-ktmt.github.io",
     repoId: "R_kgDOQ4anxA",
     category: "Announcements",
-    categoryId: "REPLACE_WITH_CATEGORY_ID",
+    categoryId: "DIC_kwDOQ4anxM4C_zuD",
   };
 
   // ── Partial includes ──────────────────────────────────────
