@@ -791,6 +791,11 @@
     color: var(--text);
 }
 
+[data-theme="dark"] .blog-post-content h2,
+[data-theme="dark"] .blog-post-content h3 {
+    color: var(--text-strong);
+}
+
 [data-theme="dark"] .blog-post-content h2 {
     border-bottom-color: var(--border-soft);
 }
