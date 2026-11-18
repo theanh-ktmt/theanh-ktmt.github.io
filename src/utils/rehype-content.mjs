@@ -11,6 +11,21 @@ export default function enrichContent() {
         visit(child);
         if (child.type !== "element") return child;
         if (
+          child.tagName === "a" &&
+          child.properties?.href &&
+          !String(child.properties.href).startsWith("#")
+        ) {
+          child.properties.target = "_blank";
+          const rel = child.properties.rel || [];
+          child.properties.rel = [
+            ...new Set([
+              ...(Array.isArray(rel) ? rel : String(rel).split(/\s+/)),
+              "noopener",
+              "noreferrer",
+            ]),
+          ];
+        }
+        if (
           child.tagName === "span" &&
           child.properties?.className?.includes("katex-display")
         ) {

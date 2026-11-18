@@ -21,7 +21,11 @@ const { title, description, date, tags, readTime } = post.data;
   </time>
   <div>
     <h2>
-      <a href={`/blogs/${post.id}.html`}>
+      <a
+        href={`/blogs/${post.id}.html`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {title} <span aria-hidden="true">↗</span>
       </a>
     </h2>
@@ -30,7 +34,13 @@ const { title, description, date, tags, readTime } = post.data;
       <span>{readTime}</span>
       <span aria-hidden="true">/</span>
       {tags.map((tag: string) => (
-        <a href={`/blogs.html?tag=${encodeURIComponent(tag)}`}>{tag}</a>
+        <a
+          href={`/blogs.html?tag=${encodeURIComponent(tag)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {tag}
+        </a>
       ))}
     </div>
   </div>

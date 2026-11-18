@@ -128,10 +128,16 @@ try {
   await page.locator("#blog-search").fill("no-such-post-928");
   assert.equal(await page.locator("#blog-empty").isVisible(), true);
   await page.locator("#blog-search").fill("");
+  const tagPopup = page.waitForEvent("popup");
   await page.locator('[data-tag="Site"]').click();
-  assert.equal(await page.locator("#blog-results [data-post]").count(), 1);
-  assert.ok(page.url().includes("tag=Site"));
-  await page.locator('[data-tag=""]').click();
+  const taggedPage = await tagPopup;
+  await taggedPage.waitForLoadState();
+  assert.equal(
+    await taggedPage.locator("#blog-results [data-post]").count(),
+    1,
+  );
+  assert.ok(taggedPage.url().includes("tag=Site"));
+  await taggedPage.close();
   await page.locator("#blog-sort").selectOption("oldest");
   assert.match(
     await page
@@ -335,6 +341,14 @@ try {
   assert.match(await page.locator("#experience").innerText(), /PIXTA Vietnam/);
   assert.match(await page.locator("#references").innerText(), /Do Ba Lam/);
   const resumeHref = await page.locator(".cv-actions a").getAttribute("href");
+  assert.equal(
+    await page.locator(".cv-actions a").getAttribute("target"),
+    "_blank",
+  );
+  assert.equal(
+    await page.locator(".cv-actions a").getAttribute("download"),
+    null,
+  );
   assert.equal(resumeHref, "/assets/resume.pdf?v=20261118");
   const pdfResponse = await page.request.get(base + resumeHref);
   assert.equal(pdfResponse.status(), 200);

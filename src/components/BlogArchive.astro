@@ -55,7 +55,14 @@ const pageUrl = (n: number) =>
       </noscript>
     </form>
     <nav class="tags" aria-label="Filter posts by topic">
-      <a class="tag" href="/blogs.html" data-tag="" aria-current="true">
+      <a
+        class="tag"
+        href="/blogs.html"
+        data-tag=""
+        aria-current="true"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         All topics
       </a>
       {tags.map((tag) => (
@@ -63,6 +70,8 @@ const pageUrl = (n: number) =>
           class="tag"
           href={`/blogs.html?tag=${encodeURIComponent(tag)}`}
           data-tag={tag}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {tag}
         </a>
@@ -81,7 +90,11 @@ const pageUrl = (n: number) =>
     </p>
     <nav id="blog-pagination" class="pagination" aria-label="Blog pagination">
       {page > 1 && (
-        <a href={pageUrl(page - 1)} rel="prev">
+        <a
+          href={pageUrl(page - 1)}
+          rel="prev noopener noreferrer"
+          target="_blank"
+        >
           ← Previous
         </a>
       )}
@@ -90,12 +103,18 @@ const pageUrl = (n: number) =>
           <a
             href={pageUrl(i + 1)}
             aria-current={page === i + 1 ? "page" : undefined}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {i + 1}
           </a>
         ))}
       {page < pages && (
-        <a href={pageUrl(page + 1)} rel="next">
+        <a
+          href={pageUrl(page + 1)}
+          rel="next noopener noreferrer"
+          target="_blank"
+        >
           Next →
         </a>
       )}

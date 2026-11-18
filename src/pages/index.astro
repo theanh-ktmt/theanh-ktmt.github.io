@@ -124,7 +124,12 @@ const schema = {
             Senior Deep Learning Algorithms Engineer at NVIDIA
           </p>
           <div class="affiliations" aria-label="Company and education">
-            <a class="affiliation" href="https://www.nvidia.com/">
+            <a
+              class="affiliation"
+              href="https://www.nvidia.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Image
                 src={nvidiaSymbol}
                 alt=""
@@ -139,6 +144,8 @@ const schema = {
             <a
               class="affiliation affiliation-school"
               href="/experience.html#about"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <Image
                 src={hustLogo}
@@ -161,7 +168,12 @@ const schema = {
             <a class="button primary" href="#projects">
               Selected work <span aria-hidden="true">↘</span>
             </a>
-            <a class="text-link" href={cv.resumeUrl}>
+            <a
+              class="text-link"
+              href={cv.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Download résumé <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -199,6 +211,8 @@ const schema = {
                 class="project-image-link"
                 href={p.href || "/contact.html"}
                 aria-label={p.href ? p.label : "Contact me about MB Chatbot"}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Image
                   src={p.image}
@@ -231,7 +245,12 @@ const schema = {
                 </div>
               </dl>
               {p.href ? (
-                <a class="text-link" href={p.href}>
+                <a
+                  class="text-link"
+                  href={p.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {p.label} ↗
                 </a>
               ) : (

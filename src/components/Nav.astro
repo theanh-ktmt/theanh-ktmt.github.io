@@ -5,28 +5,39 @@ const contact = Astro.url.pathname === "/contact.html";
 ---
 
 <header class="site-header wrap">
-  <a class="wordmark" href="/">
+  <a class="wordmark" href="/" target="_blank" rel="noopener noreferrer">
     <span class="brand-mark" aria-hidden="true">
       ta<span>.</span>
     </span>{" "}
     The Anh Tran
   </a>
   <nav aria-label="Main navigation">
-    <a href="/#projects">Work</a>
+    <a href="/#projects" target="_blank" rel="noopener noreferrer">
+      Work
+    </a>
     <a
       class="nav-experience"
       href="/experience.html"
       aria-current={experience ? "page" : undefined}
+      target="_blank"
+      rel="noopener noreferrer"
     >
       Experience
     </a>
-    <a href="/blogs.html" aria-current={blog ? "page" : undefined}>
+    <a
+      href="/blogs.html"
+      aria-current={blog ? "page" : undefined}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       Writing
     </a>
     <a
       class="nav-contact"
       href="/contact.html"
       aria-current={contact ? "page" : undefined}
+      target="_blank"
+      rel="noopener noreferrer"
     >
       Contact
     </a>

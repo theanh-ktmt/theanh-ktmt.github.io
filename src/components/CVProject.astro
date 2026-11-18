@@ -18,7 +18,7 @@ const isConfidential = project.confidential || !project.href;
   <div class="cv-project-heading">
     <h4>
       {project.href ? (
-        <a href={project.href}>
+        <a href={project.href} target="_blank" rel="noopener noreferrer">
           {project.name} <span aria-hidden="true">↗</span>
         </a>
       ) : (

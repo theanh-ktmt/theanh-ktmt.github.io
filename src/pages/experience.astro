@@ -31,7 +31,8 @@ const sections = [
         <a
           class="button primary"
           href={cv.resumeUrl}
-          download="The-Anh-Tran-CV-2026-11-18.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Download CV <span aria-hidden="true">&#8599;</span>
         </a>
@@ -119,14 +120,30 @@ const sections = [
             <article class="cv-entry">
               <p class="cv-venue">{publication.venue}</p>
               <h3 class="cv-paper-title">
-                <a href={publication.href}>
+                <a
+                  href={publication.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {publication.title} <span aria-hidden="true">&#8599;</span>
                 </a>
               </h3>
               <p class="cv-authors">{publication.authors}</p>
               <p class="publication-links">
-                <a href={publication.href}>Paper &#8599;</a>
-                <a href={publication.code}>Code &#8599;</a>
+                <a
+                  href={publication.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Paper &#8599;
+                </a>
+                <a
+                  href={publication.code}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Code &#8599;
+                </a>
               </p>
             </article>
           ))}
@@ -193,7 +210,13 @@ const sections = [
             <h3>{cv.reference.name}</h3>
             <p>{cv.reference.qualification}</p>
             <p>{cv.reference.position}</p>
-            <a href={`mailto:${cv.reference.email}`}>{cv.reference.email}</a>
+            <a
+              href={`mailto:${cv.reference.email}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {cv.reference.email}
+            </a>
           </article>
         </section>
       </div>
