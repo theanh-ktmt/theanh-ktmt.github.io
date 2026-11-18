@@ -1,0 +1,33 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+  mobile?: boolean;
+}
+const { headings, mobile = false } = Astro.props;
+const Tag = mobile ? "details" : "aside";
+---
+
+<Tag
+  class:list={["toc", { "toc-mobile": mobile }]}
+  id={mobile ? "post-toc-mobile" : "post-toc"}
+>
+  {mobile ? (
+    <summary>ON THIS PAGE</summary>
+  ) : (
+    <p class="toc-label">ON THIS PAGE</p>
+  )}
+  <nav aria-label="Table of contents">
+    <ul>
+      {headings
+        .filter(
+          (h) =>
+            (h.depth === 2 || h.depth === 3) && h.slug !== "footnote-label",
+        )
+        .map((h) => (
+          <li class={`depth-${h.depth}`}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+    </ul>
+  </nav>
+</Tag>

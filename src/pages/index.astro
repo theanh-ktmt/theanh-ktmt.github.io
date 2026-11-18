@@ -1,254 +1,245 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
----
-
-<BaseLayout
-  title="The Anh Tran — ML System Engineer"
-  description="The Anh Tran — ML System Engineer specializing in LLM inference optimization, GPU performance engineering, and distributed AI systems."
-  ogDescription="LLM inference optimization, GPU performance engineering, and distributed AI systems."
-  ogImage="/assets/profile-pic.png"
->
-  <Fragment slot="head">
-    <meta name="author" content="The Anh Tran" />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
+import SkillsMarquee from "../components/SkillsMarquee.astro";
+import nvidiaSymbol from "../../public/assets/companies/nvidia-symbol.png";
+import hustLogo from "../../public/assets/companies/hust.jpg";
+import { Image } from "astro:assets";
+import portrait from "../../public/assets/profile-pic.png";
+import morehImage from "../../public/assets/project-1.png";
+import mbImage from "../../public/assets/project-2.png";
+import asillaImage from "../../public/assets/asilla-product.png";
+const projects = [
+  {
+    name: "Moreh vLLM",
+    category: "LLM INFERENCE / AMD GPUs",
+    problem: "High-performance LLM serving on AMD hardware.",
+    work: "Optimized LLM inference with vLLM on AMD GPUs.",
+    result:
+      "20–70% faster than leading engines on AMD hardware. Achieved 90% of NVIDIA performance. Contributed to $15.6M in enterprise contracts.",
+    href: "https://moreh.io/moreh-vllm/",
+    label: "Explore Moreh vLLM",
+    image: morehImage,
+    alt: "Moreh vLLM project",
+  },
+  {
+    name: "MB Chatbot",
+    category: "RAG / ENTERPRISE AI",
+    problem:
+      "Enterprise customer service across a large document collection at MB Bank.",
+    work: "Indexed 60,000+ documents using Milvus & Neo4j.",
+    result: "Served 1,000+ users with 81% accuracy and <7s response time.",
+    label: "Confidential project",
+    image: mbImage,
+    alt: "MB Chatbot project",
+  },
+  {
+    name: "Ajikame",
+    category: "COMPUTER VISION / MEDICAL AI",
+    problem: "Medical behavior detection for Hananoki Hospital.",
+    work: "Built respiratory failure and epileptic seizure detection.",
+    result:
+      "70% accuracy for respiratory failure detection; 65% recall and <30s alert latency for epileptic seizure detection.",
+    href: "https://en.asilla.com/services/ai-security-asilla",
+    label: "Explore Asilla",
+    image: asillaImage,
+    alt: "Asilla action recognition: video input, pose estimation, time-series analysis, and fall detection",
+  },
+];
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
       "@type": "Person",
+      "@id": `${Astro.site}#person`,
       name: "The Anh Tran",
-      url: "https://theanh-ktmt.github.io/",
-      jobTitle: "ML System Engineer",
+      url: Astro.site?.href,
+      jobTitle: "Senior Deep Learning Algorithms Engineer",
+      worksFor: {
+        "@type": "Organization",
+        name: "NVIDIA",
+        url: "https://www.nvidia.com/",
+      },
       email: "mailto:trantheanh.ktmt@gmail.com",
+      image: new URL("/assets/profile-pic.png", Astro.site).href,
       sameAs: [
         "https://github.com/theanh-ktmt",
         "https://www.linkedin.com/in/theanh-ktmt/",
       ],
+      alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "Hanoi University of Science and Technology",
+      },
       knowsAbout: [
-        "LLM Inference Optimization",
-        "GPU Performance Engineering",
-        "Distributed Inference",
+        "Agent Loop",
+        "Cosmos world models",
+        "LLM inference",
+        "GPU performance",
+        "Distributed AI systems",
         "CUDA",
         "vLLM",
       ],
-      alumniOf: "Hanoi University of Science and Technology",
-    })} />
-  </Fragment>
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${Astro.site}#website`,
+      name: "The Anh Tran",
+      url: Astro.site?.href,
+      inLanguage: "en",
+      publisher: { "@id": `${Astro.site}#person` },
+    },
+  ],
+};
+---
 
-  <section id="profile">
-    <div class="section__pic-container">
-      <img src="/assets/profile-pic.png" alt="The Anh Tran profile picture" class="avatar-rounded" />
-    </div>
-    <div class="section__text">
-      <p class="section__text__p1">Hello, I'm</p>
-      <h1 class="title">The Anh Tran</h1>
-      <p class="section__text__p2">ML System Engineer</p>
-      <div class="intro-text">
-        Building high-performance LLM inference systems. Focused on GPU
-        optimization, distributed inference, and real-world AI deployment.
-      </div>
-      <div class="btn-container">
-        <button class="btn btn-color-2" onclick="window.open('/assets/resume.pdf')">
-          Download CV
-        </button>
-        <button class="btn btn-color-2" onclick="location.href='/blogs.html'">
-          Read My Blog
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <section id="about">
-    <p class="section__text__p1">Get To Know More</p>
-    <h1 class="title">About Me</h1>
-    <div class="about-details-container">
-      <div class="about-containers">
-        <div class="details-container">
-          <img src="/assets/experience.png" alt="Experience icon" class="icon" />
-          <h3>Experience</h3>
-          <p>3+ years in AI &amp; LLM Systems<br />Moreh · MB Bank · Asilla</p>
-        </div>
-        <div class="details-container">
-          <img src="/assets/education.png" alt="Education icon" class="icon" />
-          <h3>Education</h3>
-          <p>B.Eng. Computer Engineering<br />HUST — GPA 3.88/4.0<br />Ranked 1st / 176</p>
-        </div>
-      </div>
-    </div>
-    <div class="skills-marquee-section">
-      <p class="skills-row-label">Languages &amp; Tools</p>
-      <div class="marquee-wrapper">
-        <div class="marquee-track marquee-fwd">
-          <span class="skill-tag">Python</span><span class="skill-tag">C++</span><span class="skill-tag">Java</span><span class="skill-tag">CUDA</span><span class="skill-tag">Triton</span><span class="skill-tag">PyTorch</span><span class="skill-tag">vLLM / SGLang</span><span class="skill-tag">LangChain</span><span class="skill-tag">ONNX / TensorRT</span><span class="skill-tag">Docker</span><span class="skill-tag">AWS S3</span><span class="skill-tag">Flask / FastAPI</span><span class="skill-tag">Spring Boot</span>
-          <span class="skill-tag">Python</span><span class="skill-tag">C++</span><span class="skill-tag">Java</span><span class="skill-tag">CUDA</span><span class="skill-tag">Triton</span><span class="skill-tag">PyTorch</span><span class="skill-tag">vLLM / SGLang</span><span class="skill-tag">LangChain</span><span class="skill-tag">ONNX / TensorRT</span><span class="skill-tag">Docker</span><span class="skill-tag">AWS S3</span><span class="skill-tag">Flask / FastAPI</span><span class="skill-tag">Spring Boot</span>
-        </div>
-      </div>
-      <p class="skills-row-label">Expertise</p>
-      <div class="marquee-wrapper">
-        <div class="marquee-track marquee-rev">
-          <span class="skill-tag">LLM Inference Optimization</span><span class="skill-tag">GPU Performance Engineering</span><span class="skill-tag">Distributed Inference</span><span class="skill-tag">Edge AI</span><span class="skill-tag">RAG</span><span class="skill-tag">Prompt Engineering</span><span class="skill-tag">Model Optimization</span><span class="skill-tag">MLOps &amp; CI/CD</span><span class="skill-tag">LLM Benchmarking</span><span class="skill-tag">Quantization</span><span class="skill-tag">Kernel Fusion</span><span class="skill-tag">Computer Vision</span>
-          <span class="skill-tag">LLM Inference Optimization</span><span class="skill-tag">GPU Performance Engineering</span><span class="skill-tag">Distributed Inference</span><span class="skill-tag">Edge AI</span><span class="skill-tag">RAG</span><span class="skill-tag">Prompt Engineering</span><span class="skill-tag">Model Optimization</span><span class="skill-tag">MLOps &amp; CI/CD</span><span class="skill-tag">LLM Benchmarking</span><span class="skill-tag">Quantization</span><span class="skill-tag">Kernel Fusion</span><span class="skill-tag">Computer Vision</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="projects">
-    <p class="section__text__p1">Browse My Recent</p>
-    <h1 class="title">Projects</h1>
-    <div class="experience-details-container">
-      <div class="about-containers">
-        <div class="details-container color-container">
-          <div class="article-container">
-            <img src="/assets/project-1.png" alt="Moreh-vLLM" class="project-img" loading="lazy" decoding="async" />
-          </div>
-          <h2 class="experience-sub-title project-title">Moreh vLLM</h2>
-          <p>
-            AMD-optimized LLM inference engine. 20–70% faster than leading
-            engines on AMD hardware. Achieved 90% of NVIDIA performance.
-            Contributed to $15.6M in enterprise contracts.
+<BaseLayout
+  title="The Anh Tran - Personal Page"
+  description="The Anh Tran, Senior Deep Learning Algorithms Engineer at NVIDIA. Building agent loops to automatically optimize Cosmos world models; previously optimizing vLLM inference on AMD GPUs."
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(schema).replace(/</g, "\\u003c")}
+  />
+  <div class="home">
+    <div class="wrap">
+      <section id="profile" class="hero">
+        <div class="hero-copy">
+          <h1>
+            The Anh Tran<span class="accent">.</span>
+          </h1>
+          <p class="hero-role">
+            Senior Deep Learning Algorithms Engineer at NVIDIA
           </p>
-          <div class="btn-container">
-            <button class="btn btn-color-2 project-btn" onclick="window.open('https://moreh.io/moreh-vllm/', '_blank')">
-              See More
-            </button>
+          <div class="affiliations" aria-label="Company and education">
+            <a class="affiliation" href="https://www.nvidia.com/">
+              <Image
+                src={nvidiaSymbol}
+                alt=""
+                width={42}
+                height={29}
+                widths={[84, 126]}
+                format="webp"
+                class="affiliation-symbol"
+              />
+              <span>NVIDIA</span>
+            </a>
+            <a
+              class="affiliation affiliation-school"
+              href="/experience.html#about"
+            >
+              <Image
+                src={hustLogo}
+                alt=""
+                width={30}
+                height={45}
+                widths={[60, 90]}
+                format="webp"
+                class="affiliation-school-logo"
+              />
+              <span>Hanoi University of Science and Technology</span>
+            </a>
           </div>
-        </div>
-        <div class="details-container color-container">
-          <div class="article-container">
-            <img src="/assets/project-2.png" alt="MB Chatbot" class="project-img" loading="lazy" decoding="async" />
-          </div>
-          <h2 class="experience-sub-title project-title">MB Chatbot</h2>
-          <p>
-            Enterprise RAG-based customer service system at MB Bank. Indexed
-            60,000+ documents using Milvus &amp; Neo4j. Served 1,000+ users
-            with 81% accuracy and &lt;7s response time.
+          <p class="hero-intro">
+            Building agent loops to automatically optimize Cosmos world models.
+            Previously focused on optimizing LLM inference with vLLM on AMD
+            GPUs.
           </p>
-          <div class="btn-container">
-            <button class="btn btn-disabled project-btn" disabled>Confidential</button>
+          <div class="hero-links">
+            <a class="button primary" href="#projects">
+              Selected work <span aria-hidden="true">↘</span>
+            </a>
+            <a class="text-link" href="/assets/resume.pdf">
+              Download résumé <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
-        <div class="details-container color-container">
-          <div class="article-container">
-            <img src="/assets/project-3.png" alt="Ajikame" class="project-img" loading="lazy" decoding="async" />
-          </div>
-          <h2 class="experience-sub-title project-title">Ajikame</h2>
-          <p>
-            Medical behavior detection system for Hananoki Hospital. Built
-            respiratory failure detection (70% accuracy) and epileptic
-            seizure detection (65% recall, &lt;30s alert latency).
-          </p>
-          <div class="btn-container">
-            <button class="btn btn-color-2 project-btn" onclick="window.open('https://en.asilla.com/services/ai-security-asilla', '_blank')">
-              See More
-            </button>
-          </div>
+        <div class="hero-portrait">
+          <Image
+            src={portrait}
+            alt="The Anh Tran"
+            width={340}
+            height={340}
+            widths={[224, 340, 600]}
+            sizes="(max-width: 540px) 112px, (max-width: 800px) 160px, 340px"
+            format="webp"
+            quality={85}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
         </div>
-      </div>
+      </section>
     </div>
-  </section>
-
-  <section id="publications">
-    <p class="section__text__p1">Research</p>
-    <h1 class="title">Publications</h1>
-    <div class="experience-details-container">
-      <div class="publications-list">
-        <div class="publication-item">
-          <div class="pub-status">Under Review</div>
-          <div class="pub-title">PGA-KD: Principal Geometry Alignment and Semantic Consistency for VLM2Vec Distillation</div>
-          <div class="pub-authors">
-            <span class="author-highlight">The-Anh Tran</span>,
-            Thanh Xuan Nguyen, Duc Anh Nguyen, Dinh Viet Sang, Linh Ngo Van, Thien Huu Nguyen
+    <SkillsMarquee />
+    <div class="wrap">
+      <section id="projects" class="home-section">
+        <header class="section-heading">
+          <div>
+            <h2>Selected projects</h2>
           </div>
-        </div>
-      </div>
+        </header>
+        {projects.map((p) => (
+          <article class="project-row">
+            <div class="project-identity">
+              <h3>{p.name}</h3>
+              <a
+                class="project-image-link"
+                href={p.href || "/contact.html"}
+                aria-label={p.href ? p.label : "Contact me about MB Chatbot"}
+              >
+                <Image
+                  src={p.image}
+                  alt={p.alt}
+                  loading="lazy"
+                  decoding="async"
+                  width={640}
+                  height={360}
+                  widths={[360, 640, 960]}
+                  sizes="(max-width: 540px) calc(100vw - 40px), (max-width: 800px) 40vw, 360px"
+                  format="webp"
+                  fit="cover"
+                  quality={85}
+                />
+              </a>
+            </div>
+            <div class="project-details">
+              <dl>
+                <div>
+                  <dt class="sr-only">THE PROBLEM</dt>
+                  <dd>{p.problem}</dd>
+                </div>
+                <div>
+                  <dt class="sr-only">MY CONTRIBUTION</dt>
+                  <dd>{p.work}</dd>
+                </div>
+                <div>
+                  <dt class="sr-only">THE RESULT</dt>
+                  <dd>{p.result}</dd>
+                </div>
+              </dl>
+              {p.href ? (
+                <a class="text-link" href={p.href}>
+                  {p.label} ↗
+                </a>
+              ) : (
+                <span class="muted mono">{p.label}</span>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
     </div>
-  </section>
-
-  <section id="honors">
-    <p class="section__text__p1">Achievements</p>
-    <h1 class="title">Honors & Recognitions</h1>
-    <div class="experience-details-container">
-      <div class="honors-controls">
-        <span>Sort by year:</span>
-        <button class="sort-btn active" data-order="desc" onclick="sortHonors('desc')">Newest first</button>
-        <button class="sort-btn" data-order="asc" onclick="sortHonors('asc')">Oldest first</button>
-      </div>
-      <ul class="honors-list" id="honors-list">
-        <li data-year="2025">
-          <span class="honor-award">Honorable Mention</span> — Hack&lt;CX&gt;Together 2025
-          <span class="honor-org">HUST &amp; Techcombank</span>
-          <span class="honor-desc">Automatic Loan Approval (AI)</span>
-        </li>
-        <li data-year="2023">
-          <span class="honor-award">Best Presentation Award</span> — Best Graduate Thesis (AIoT)
-          <span class="honor-org">HUST, 2023</span>
-        </li>
-        <li data-year="2023">
-          <span class="honor-award">Talent Scholarship</span> — 7/8 semesters
-          <span class="honor-org">HUST, 2020–2023</span>
-        </li>
-        <li data-year="2023">
-          <span class="honor-award">3rd Place</span> — Chat'Innov Hackathon
-          <span class="honor-org">AUF, 2023</span>
-          <span class="honor-desc">Laptop Advisor Chatbot (AI)</span>
-        </li>
-        <li data-year="2023">
-          <span class="honor-award">3rd Place</span> — Oraichain Hackathon
-          <span class="honor-org">Oraichain Labs &amp; CYTAST, 2023</span>
-          <span class="honor-desc">Decentralized Image Ownership Verification (AI, Blockchain, Web3)</span>
-        </li>
-        <li data-year="2022">
-          <span class="honor-award">Honorable Mention</span> — Vietnamese Traffic Safety Contest
-          <span class="honor-org">Vietnam Traffic Police &amp; Dan Tri News, 2022</span>
-          <span class="honor-desc">Traffic Density Monitoring System (AIoT)</span>
-        </li>
-        <li data-year="2017">
-          <span class="honor-award">2nd Place</span> — Hanoi Open Mathematics Competitions
-          <span class="honor-org">Hanoi Mathematical Society, 2017</span>
-        </li>
-      </ul>
-      <div class="pagination-controls" id="honors-pagination"></div>
-    </div>
-  </section>
-
-  <section id="activities">
-    <p class="section__text__p1">Beyond Work</p>
-    <h1 class="title">Activities</h1>
-    <div class="experience-details-container">
-      <ul class="honors-list" id="activities-list">
-        <li data-year="2023">
-          <span class="honor-award">Head of Communication</span> — BKFintech Club, HUST
-          <span class="honor-org">2023–2024</span>
-        </li>
-        <li data-year="2023">
-          <span class="honor-award">Research Assistant</span> — BKC Lab, HUST
-          <span class="honor-org">2023–2025</span>
-        </li>
-        <li data-year="2023">
-          <span class="honor-award">Teaching Assistant</span> — Computer Vision, VinBigdata
-          <span class="honor-org">2023</span>
-        </li>
-        <li data-year="2022">
-          <span class="honor-award">Research Assistant</span> — NCT Lab, HUST
-          <span class="honor-org">2022</span>
-        </li>
-      </ul>
-      <div class="pagination-controls" id="activities-pagination"></div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <p class="section__text__p1">Get in Touch</p>
-    <h1 class="title">Contact Me</h1>
-    <div class="contact-info-upper-container">
-      <div class="contact-info-container">
-        <img src="/assets/email.png" alt="Email icon" class="icon contact-icon email-icon" />
-        <p><a href="mailto:trantheanh.ktmt@gmail.com">trantheanh.ktmt@gmail.com</a></p>
-      </div>
-      <div class="contact-info-container">
-        <img src="/assets/linkedin.png" alt="LinkedIn icon" class="icon contact-icon" />
-        <p><a href="https://www.linkedin.com/in/theanh-ktmt/">LinkedIn</a></p>
-      </div>
-    </div>
-  </section>
-
-  <script is:inline src="/js/home.js" defer></script>
+  </div>
+  <script is:inline>
+    const moved = {
+      "#experience": "/experience.html#experience",
+      "#about": "/experience.html#about",
+      "#honors": "/experience.html#honors",
+      "#activities": "/experience.html#activities",
+      "#writing": "/blogs.html",
+      "#publications": "/experience.html#publications",
+      "#contact": "/contact.html",
+    };
+    if (moved[location.hash]) location.replace(moved[location.hash]);
+  </script>
 </BaseLayout>

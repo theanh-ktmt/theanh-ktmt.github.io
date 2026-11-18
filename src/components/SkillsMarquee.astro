@@ -1,0 +1,77 @@
+---
+const skills = [
+  "Agent Loop",
+  "World Models",
+  "LLM Inference Optimization",
+  "GPU Performance Engineering",
+  "Distributed Inference",
+  "Edge AI",
+  "RAG",
+  "Prompt Engineering",
+  "Model Optimization",
+  "MLOps & CI/CD",
+  "LLM Benchmarking",
+  "Quantization",
+  "Kernel Fusion",
+  "Computer Vision",
+];
+---
+
+<section class="skills-band" aria-label="Skills">
+  <div class="skills-marquee" data-marquee>
+    <div class="skills-track">
+      <ul class="skills-group" role="list">
+        {skills.map((skill) => (
+          <li>{skill}</li>
+        ))}
+      </ul>
+      <ul class="skills-group" aria-hidden="true" role="list">
+        {skills.map((skill) => (
+          <li>{skill}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="skills-controls">
+      <button
+        class="skills-toggle"
+        type="button"
+        aria-label="Pause skill animation"
+        aria-pressed="false"
+      >
+        <svg
+          class="pause-icon"
+          width="15"
+          height="15"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M5 4h3v12H5zm7 0h3v12h-3z" />
+        </svg>
+        <svg
+          class="play-icon"
+          width="15"
+          height="15"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="m6 3 11 7-11 7z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+<script>
+  const marquee = document.querySelector<HTMLElement>("[data-marquee]");
+  const toggle = marquee?.querySelector<HTMLButtonElement>(".skills-toggle");
+  toggle?.addEventListener("click", () => {
+    const paused = marquee?.dataset.paused !== "true";
+    if (marquee) marquee.dataset.paused = String(paused);
+    toggle.setAttribute("aria-pressed", String(paused));
+    toggle.setAttribute(
+      "aria-label",
+      paused ? "Resume skill animation" : "Pause skill animation",
+    );
+  });
+</script>

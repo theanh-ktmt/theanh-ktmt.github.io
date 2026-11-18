@@ -1,8 +1,21 @@
----
-const { src, alt = "", caption = "", narrow = false } = Astro.props;
+﻿---
+import { dimensions } from "../utils/images";
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  narrow?: boolean;
+}
+const { src, alt, caption = "", narrow = false } = Astro.props;
 ---
 
-<div class={`blog-figure${narrow ? " narrow" : ""}`}>
-  <img src={src} alt={alt} loading="lazy" decoding="async" />
+<figure class:list={["blog-figure", { narrow }]}>
+  <img
+    src={src}
+    alt={alt}
+    {...dimensions(src)}
+    loading="lazy"
+    decoding="async"
+  />
   {caption && <figcaption set:html={caption} />}
-</div>
+</figure>

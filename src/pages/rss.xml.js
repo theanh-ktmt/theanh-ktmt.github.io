@@ -6,7 +6,7 @@ export async function GET(context) {
   return rss({
     title: "The Anh Tran — Blog",
     description:
-      "Technical posts on LLM inference, GPU optimization, and distributed systems.",
+      "Notes on agent loops, world models, LLM inference, and GPU performance.",
     site: context.site,
     items: posts
       .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())

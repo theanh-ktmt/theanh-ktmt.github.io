@@ -1,0 +1,79 @@
+﻿---
+title: "Writing Features: Math, Code, Tables, and Notes"
+description: "A sample post demonstrating mathematical notation, copyable code, responsive tables, callouts, figures, and footnotes."
+date: 2026-11-17
+tags: ["Site", "Sample", "LLM", "Inference"]
+readTime: "3 min read"
+hero: "/assets/blogs/vllm-intro/hero.svg"
+heroAlt: "Illustration of the vLLM serving stack, reused here to demonstrate article figures."
+sample: true
+---
+
+import Callout from "../../components/Callout.astro";
+import Figure from "../../components/Figure.astro";
+
+This **sample post** demonstrates the publishing features available on this site. The equations and code below are illustrative definitions, not measured project results.
+
+## Inline and display math
+
+Inline notation stays in the sentence: arithmetic intensity is $I = F / B$, with $F$ floating-point operations and $B$ bytes transferred.
+
+A conceptual roofline model bounds attainable performance:
+
+$$
+P(I) = \min\left(P_{\mathrm{peak}},\; \beta I\right)
+$$
+
+Here $P_{\mathrm{peak}}$ is peak compute throughput and $\beta$ is memory bandwidth. The notation is typeset at build time, including accessible MathML.[^math]
+
+Long equations scroll horizontally within their own container:
+
+$$
+\operatorname{Attention}(Q,K,V)=\operatorname{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}+M\right)V,\qquad Q\in\mathbb{R}^{n\times d_k},\quad K\in\mathbb{R}^{m\times d_k},\quad V\in\mathbb{R}^{m\times d_v},\quad M\in\mathbb{R}^{n\times m}
+$$
+
+## Code you can copy
+
+The button copies the original code without line numbers or surrounding UI text.
+
+```python
+def arithmetic_intensity(flops: float, bytes_transferred: float) -> float:
+    """Return floating-point operations per byte transferred."""
+    if bytes_transferred <= 0:
+        raise ValueError("bytes_transferred must be positive")
+    return flops / bytes_transferred
+```
+
+## Responsive tables
+
+On narrow screens, this table scrolls inside its own region. These rows define terms; they do not report benchmark measurements.
+
+| Quantity             | Symbol              | Unit          | Interpretation                      |
+| -------------------- | ------------------- | ------------- | ----------------------------------- |
+| Arithmetic intensity | $I$                 | FLOP / byte   | Operations performed per byte moved |
+| Memory bandwidth     | $\beta$             | byte / second | Rate of data transfer from memory   |
+| Compute throughput   | $P$                 | FLOP / second | Rate of floating-point computation  |
+| Compute ceiling      | $P_{\mathrm{peak}}$ | FLOP / second | The theoretical compute limit       |
+
+## Callouts and figures
+
+<Callout type="blue">
+
+**Read measurements in context.** A roofline model describes a bound. Real performance also depends on kernel implementation, workload shape, synchronization, and hardware behavior.
+
+</Callout>
+
+<Figure
+  src="/assets/blogs/vllm-intro/hero.svg"
+  alt="An illustration introducing the vLLM serving stack."
+  caption="An existing site illustration, reused to demonstrate a responsive figure and caption."
+  narrow
+/>
+
+## Footnotes
+
+Footnotes have links in both directions and remain available without JavaScript. Vietnamese text also uses the self-hosted font subsets: **Tiếng Việt — Trần Thế Anh**.[^fonts]
+
+[^math]: Equations use KaTeX with locally served CSS and fonts. No external math rendering service is required.
+
+[^fonts]: The site uses IBM Plex Sans for text and JetBrains Mono for code and numeric metadata.

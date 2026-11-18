@@ -9,3 +9,6 @@ node_modules/
 .env
 .env.production
 .DS_Store
+.audit/
+# Generated audit reports and screenshots remain local.
+reports/

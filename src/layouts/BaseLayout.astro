@@ -1,88 +1,76 @@
 ---
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import SEO from "../components/SEO.astro";
+import "../styles/fonts.css";
 import "../styles/style.css";
-import "../styles/mediaqueries.css";
-import "../styles/blogs.css";
-
 interface Props {
   title: string;
-  description?: string;
-  canonical?: string;
-  ogType?: string;
-  ogTitle?: string;
-  ogDescription?: string;
+  description: string;
   ogImage?: string;
+  ogType?: string;
   robots?: string;
 }
-
-const {
-  title,
-  description,
-  canonical,
-  ogType = "website",
-  ogTitle,
-  ogDescription,
-  ogImage,
-  robots,
-} = Astro.props;
-
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
-const ogImageUrl = ogImage
-  ? new URL(ogImage, Astro.site).href
-  : undefined;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
     <script is:inline>
-      (function () {
+      (() => {
+        let t;
         try {
-          var t = localStorage.getItem("theme") || "dark";
-          document.documentElement.setAttribute("data-theme", t);
-        } catch (e) {}
+          t = localStorage.getItem("theme");
+        } catch {}
+        document.documentElement.dataset.theme =
+          t === "light" || t === "dark"
+            ? t
+            : matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
       })();
     </script>
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    {robots && <meta name="robots" content={robots} />}
-    <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title="The Anh Tran — Blog" href="/rss.xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <meta property="og:type" content={ogType} />
-    <meta property="og:title" content={ogTitle ?? title} />
-    {
-      (ogDescription ?? description) && (
-        <meta property="og:description" content={ogDescription ?? description} />
-      )
-    }
-    <meta property="og:url" content={canonicalUrl} />
-    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-    <meta name="twitter:card" content={ogImageUrl ? "summary_large_image" : "summary"} />
-    <meta name="twitter:title" content={ogTitle ?? title} />
-    {
-      (ogDescription ?? description) && (
-        <meta name="twitter:description" content={ogDescription ?? description} />
-      )
-    }
-    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+    <SEO {...Astro.props} />
+    <link
+      rel="preload"
+      href="/fonts/ibm-plex-sans-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/favicon.png?v=ta2"
+    />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=ta2" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="The Anh Tran — Writing"
+      href="/rss.xml"
+    />
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
     <Nav />
-    <main id="main">
+    <main id="main" tabindex="-1">
       <slot />
     </main>
     <Footer />
-    <div class="toast" id="copy-toast">&#10003;&nbsp; Link copied to clipboard!</div>
+    <div
+      id="copy-status"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+    ></div>
     <script>
       import "../scripts/site.js";
     </script>

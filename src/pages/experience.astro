@@ -1,0 +1,182 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Experience - The Anh Tran"
+  description="The Anh Tran's work at NVIDIA on agent loops for Cosmos world models, previous ML systems work, education, and research."
+>
+  <div class="wrap experience-page">
+    <header class="page-heading">
+      <h1>
+        Experience<span class="accent">.</span>
+      </h1>
+    </header>
+    <section id="experience" class="home-section">
+      <header class="section-heading">
+        <div>
+          <h2>Work</h2>
+        </div>
+        <a class="text-link" href="/assets/resume.pdf">
+          Full résumé ↗
+        </a>
+      </header>
+      <div class="experience-row current-role">
+        <h3>NVIDIA</h3>
+        <div>
+          <p class="experience-title">
+            Senior Deep Learning Algorithms Engineer
+          </p>
+          <p>
+            Building agent loops to automatically optimize Cosmos world models.
+          </p>
+        </div>
+        <span class="muted">Present</span>
+      </div>
+      {[
+        ["Moreh", "LLM inference on AMD hardware"],
+        ["MB Bank", "Enterprise RAG-based customer service"],
+        ["Asilla", "Medical behavior detection"],
+      ].map(([name, area]) => (
+        <div class="experience-row">
+          <h3>{name}</h3>
+          <p>{area}</p>
+          <!-- TODO: Add exact role titles and employment dates. -->
+        </div>
+      ))}
+    </section>
+    <section id="about" class="home-section background-section">
+      <h2>Background</h2>
+      <div class="background-grid">
+        <div>
+          <h3>Education</h3>
+          <p>
+            B.Eng. Computer Engineering
+            <br />
+            Hanoi University of Science and Technology
+          </p>
+          <p class="mono">GPA 3.88/4.0 · Ranked 1st / 176</p>
+        </div>
+        <div>
+          <h3>Languages &amp; tools</h3>
+          <p>
+            Python · C++ · Java · CUDA · Triton · PyTorch · vLLM / SGLang ·
+            LangChain · ONNX / TensorRT · Docker · AWS S3 · Flask / FastAPI ·
+            Spring Boot
+          </p>
+          <h3>Expertise</h3>
+          <p>
+            LLM Inference Optimization · GPU Performance Engineering ·
+            Distributed Inference · Edge AI · RAG · Prompt Engineering · Model
+            Optimization · MLOps &amp; CI/CD · LLM Benchmarking · Quantization ·
+            Kernel Fusion · Computer Vision
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- Existing research, honors, and activities are retained below. -->
+    <section id="publications">
+      <h2 class="title">Publications</h2>
+      <div class="experience-details-container">
+        <div class="publications-list">
+          <div class="publication-item">
+            <div class="pub-status">EMNLP 2026</div>
+            <div class="pub-title">
+              <a href="https://aclanthology.org/2026.emnlp-main.257/">
+                PGA-KD: Principal Geometry Alignment and Semantic Consistency
+                for VLM2Vec Distillation
+              </a>
+            </div>
+            <div class="pub-authors">
+              <span class="author-highlight">The-Anh Tran</span>, Thanh Xuan
+              Nguyen, Duc Anh Nguyen, Dinh Viet Sang, Linh Ngo Van, Thien Huu
+              Nguyen
+            </div>
+            <p class="publication-links">
+              <a href="https://aclanthology.org/2026.emnlp-main.257/">
+                Paper &#8599;
+              </a>
+              <a href="https://github.com/theanh-ktmt/PGA-KD">Code &#8599;</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="honors">
+      <h2 class="title">Honors & Recognitions</h2>
+      <div class="experience-details-container">
+        <ul class="honors-list" id="honors-list">
+          <li data-year="2025">
+            <span class="honor-award">Honorable Mention</span> —
+            Hack&lt;CX&gt;Together 2025
+            <span class="honor-org">HUST &amp; Techcombank</span>
+            <span class="honor-desc">Automatic Loan Approval (AI)</span>
+          </li>
+          <li data-year="2023">
+            <span class="honor-award">Best Presentation Award</span> — Best
+            Graduate Thesis (AIoT)
+            <span class="honor-org">HUST, 2023</span>
+          </li>
+          <li data-year="2023">
+            <span class="honor-award">Talent Scholarship</span> — 7/8 semesters
+            <span class="honor-org">HUST, 2020–2023</span>
+          </li>
+          <li data-year="2023">
+            <span class="honor-award">3rd Place</span> — Chat'Innov Hackathon
+            <span class="honor-org">AUF, 2023</span>
+            <span class="honor-desc">Laptop Advisor Chatbot (AI)</span>
+          </li>
+          <li data-year="2023">
+            <span class="honor-award">3rd Place</span> — Oraichain Hackathon
+            <span class="honor-org">Oraichain Labs &amp; CYTAST, 2023</span>
+            <span class="honor-desc">
+              Decentralized Image Ownership Verification (AI, Blockchain, Web3)
+            </span>
+          </li>
+          <li data-year="2022">
+            <span class="honor-award">Honorable Mention</span> — Vietnamese
+            Traffic Safety Contest
+            <span class="honor-org">
+              Vietnam Traffic Police &amp; Dan Tri News, 2022
+            </span>
+            <span class="honor-desc">
+              Traffic Density Monitoring System (AIoT)
+            </span>
+          </li>
+          <li data-year="2017">
+            <span class="honor-award">2nd Place</span> — Hanoi Open Mathematics
+            Competitions
+            <span class="honor-org">Hanoi Mathematical Society, 2017</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="activities">
+      <h2 class="title">Activities</h2>
+      <div class="experience-details-container">
+        <ul class="honors-list" id="activities-list">
+          <li data-year="2023">
+            <span class="honor-award">Head of Communication</span> — BKFintech
+            Club, HUST
+            <span class="honor-org">2023–2024</span>
+          </li>
+          <li data-year="2023">
+            <span class="honor-award">Research Assistant</span> — BKC Lab, HUST
+            <span class="honor-org">2023–2025</span>
+          </li>
+          <li data-year="2023">
+            <span class="honor-award">Teaching Assistant</span> — Computer
+            Vision, VinBigdata
+            <span class="honor-org">2023</span>
+          </li>
+          <li data-year="2022">
+            <span class="honor-award">Research Assistant</span> — NCT Lab, HUST
+            <span class="honor-org">2022</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

@@ -7,12 +7,31 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "audit:mobile": "node scripts/audit.mjs",
+    "check:browser": "node scripts/verify.mjs",
+    "format": "prettier --write src scripts astro.config.mjs package.json .prettierrc.json",
+    "format:check": "prettier --check src scripts astro.config.mjs package.json .prettierrc.json"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.4",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^5.7.5"
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "astro": "^5.7.5",
+    "image-size": "^2.1.0",
+    "katex": "^0.16.47",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "satori": "^0.63.2"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "lighthouse": "^13.6.0",
+    "playwright": "^1.65.1",
+    "prettier": "^3.10.1",
+    "prettier-plugin-astro": "^1.1.2"
   }
 }

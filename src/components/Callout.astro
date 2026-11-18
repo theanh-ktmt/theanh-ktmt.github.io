@@ -1,13 +1,10 @@
----
-// Usage in MDX (keep blank lines around the inner text so MDX wraps it in <p>):
-//   <Callout type="blue">
-//
-//   🔑 ...text...
-//
-//   </Callout>
+﻿---
+interface Props {
+  type?: string;
+}
 const { type = "" } = Astro.props;
 ---
 
-<div class={`blog-callout ${type}`.trim()}>
+<aside class:list={["blog-callout", type]} aria-label="Note">
   <slot />
-</div>
+</aside>
