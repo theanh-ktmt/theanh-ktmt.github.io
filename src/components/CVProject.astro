@@ -1,0 +1,45 @@
+---
+interface Props {
+  project: {
+    name: string;
+    team?: string;
+    confidential?: boolean;
+    description: string;
+    bullets: string[];
+    stack?: string;
+    href?: string;
+  };
+}
+const { project } = Astro.props;
+const isConfidential = project.confidential || !project.href;
+---
+
+<div class="cv-project">
+  <div class="cv-project-heading">
+    <h4>
+      {project.href ? (
+        <a href={project.href}>
+          {project.name} <span aria-hidden="true">↗</span>
+        </a>
+      ) : (
+        project.name
+      )}
+    </h4>
+    {isConfidential && <span class="cv-confidential">Confidential</span>}
+  </div>
+  {project.team && <p class="cv-team">{project.team}</p>}
+  <p class="cv-project-description">{project.description}</p>
+  {project.bullets.length > 0 && (
+    <ul class="cv-bullets">
+      {project.bullets.map((bullet) => (
+        <li>{bullet}</li>
+      ))}
+    </ul>
+  )}
+  {project.stack && (
+    <p class="cv-stack">
+      <span class="sr-only">Technical stack: </span>
+      {project.stack}
+    </p>
+  )}
+</div>

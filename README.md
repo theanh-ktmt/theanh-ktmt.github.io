@@ -19,7 +19,7 @@ Node 22 is used in GitHub Actions. On Windows systems whose npm script shell is 
 - Slate neutrals and one blue accent, with system-aware light/dark themes and a persisted override applied before paint.
 - Structural borders and open editorial layouts. The hero uses the existing portrait, optimized to responsive WebP images, with a compact avatar above the introduction on smaller screens.
 - Static HTML pages and small vanilla JavaScript modules; no client framework.
-- The home page contains the current NVIDIA role, affiliations, a short introduction, animated skills, and selected projects. Publications are on Experience, and contact has a dedicated page at `/contact.html`, linked from navigation and footer. Experience, education, honors, activities, and tools are on `/experience.html`; Writing remains at `/blogs.html`. Missing historical role/date details are recorded as source TODOs.
+- The home page contains the current NVIDIA role, affiliations, a short introduction, animated skills, and selected projects. Publications are on Experience, and contact has a dedicated page at `/contact.html`, linked from navigation and footer. Experience, education, honors, activities, and tools are on `/experience.html`; Writing remains at `/blogs.html`. The experience page is synchronized with the owner-supplied CV dated 18 November 2026, including complete role dates and titles.
 
 ## Publishing
 
@@ -94,3 +94,11 @@ The supplied transparent NVIDIA logos are self-hosted. The hero uses the symbol-
 The landing page contains an introduction, employer/university affiliations, a full-width skills marquee, and selected projects. Publications are on `/experience.html#publications`. Contact has its own `/contact.html` page with email, LinkedIn, and GitHub. The navigation, footer, and confidential-project contact link lead there; old home `#contact` links forward to that page. The original horizontal NVIDIA logo is retained at `public/assets/companies/nvidia.png`; the hero uses the owner-supplied symbol at `nvidia-symbol.png` and HUST logo at `hust.jpg`.
 
 The skills animation has a pause/resume button and pauses on hover or keyboard focus. Reduced-motion users get a static wrapping skills list, disabled hover movement, and immediate anchor navigation. Other users get native smooth scrolling, subtle hover underlines, and a small image zoom on project links.
+
+## Updating the web CV
+
+The current resume is the only PDF under `public/`, at `public/assets/resume.pdf`. Replace it in place when updating the CV; keep previous versions out of public assets. The current copy is the owner-supplied 18 November 2026 PDF, unchanged.
+
+`src/data/cv.ts` holds the last-updated date, versioned resume URL, complete work/education history, technical skills, publications, honors, activities, languages, and reference. The Experience page renders this data with a responsive section index, and the skills marquee imports the same source. Update its date and versioned URL when replacing the PDF so browser caches pick up the new download.
+
+The AutoResearch thumbnail is the owner-supplied illustration at `public/assets/autoresearch.png`; Astro generates responsive WebP images. AutoResearch and MB Chatbot are marked Confidential and lead to the Contact page instead of an external product link. Figures and technical details follow the supplied CV; no additional project results are inferred.

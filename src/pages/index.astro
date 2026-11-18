@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { cv } from "../data/cv";
+import autoResearchImage from "../../public/assets/autoresearch.png";
 import SkillsMarquee from "../components/SkillsMarquee.astro";
 import nvidiaSymbol from "../../public/assets/companies/nvidia-symbol.png";
 import hustLogo from "../../public/assets/companies/hust.jpg";
@@ -9,6 +11,17 @@ import morehImage from "../../public/assets/project-1.png";
 import mbImage from "../../public/assets/project-2.png";
 import asillaImage from "../../public/assets/asilla-product.png";
 const projects = [
+  {
+    name: "NVIDIA AutoResearch",
+    category: "LLM AGENTS / WORLD MODELS",
+    problem: "Autonomous inference optimization for Cosmos world models.",
+    work: "Built a reliable agent loop with deterministic verification and guardrails for unattended multi-day campaigns.",
+    result:
+      "Cosmos3-Nano: Sim-Auto +415% on vLLM-Omni (4 H200 GPUs). On SGLang (1 H200 GPU): Sim-Auto +103%, Sim-Bimanual +71%, Sim-Transfer +49%, and Transfer-Auto +17%.",
+    label: "Confidential project",
+    image: autoResearchImage,
+    alt: "Loop Engineering illustration showing planner, reasoner, retriever, evaluator, analyzer, and executor agents in a continuous loop.",
+  },
   {
     name: "Moreh vLLM",
     category: "LLM INFERENCE / AMD GPUs",
@@ -148,7 +161,7 @@ const schema = {
             <a class="button primary" href="#projects">
               Selected work <span aria-hidden="true">↘</span>
             </a>
-            <a class="text-link" href="/assets/resume.pdf">
+            <a class="text-link" href={cv.resumeUrl}>
               Download résumé <span aria-hidden="true">↗</span>
             </a>
           </div>

@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
 import { serverFor } from "./static-server.mjs";
@@ -242,7 +242,7 @@ try {
   );
   assert.equal(
     await page.locator(".skills-group:not([aria-hidden]) li").count(),
-    14,
+    25,
   );
   assert.equal(await page.locator(".brand-mark").innerText(), "ta.");
   assert.equal(await page.locator("main .hero-intro").count(), 1);
@@ -278,10 +278,70 @@ try {
     ).status(),
     404,
   );
+  assert.equal(await page.locator(".project-row").count(), 4);
+  const autoResearch = page.locator(".project-row").first();
+  assert.match(await autoResearch.locator("h3").innerText(), /AutoResearch/);
+  assert.match(await autoResearch.innerText(), /Confidential project/);
+  assert.match(
+    await autoResearch.locator("img").getAttribute("src"),
+    /autoresearch/,
+  );
+  for (const skill of [
+    "vLLM-Omni",
+    "TRT-LLM",
+    "MCP",
+    "Kubernetes",
+    "torch.compile",
+  ]) {
+    assert.ok(
+      (
+        await page.locator(".skills-group:not([aria-hidden])").innerText()
+      ).includes(skill),
+    );
+  }
   await page.keyboard.press("Tab");
   assert.equal(
     await page.evaluate(() => document.activeElement.textContent.trim()),
     "Skip to content",
+  );
+  await page.goto(base + "/experience.html");
+  assert.equal(
+    await page.locator(".cv-updated time").getAttribute("datetime"),
+    "2026-11-18",
+  );
+  assert.equal(
+    await page.locator(".cv-updated time").innerText(),
+    "18/11/2026",
+  );
+  assert.equal(await page.locator("#experience > .cv-entry").count(), 6);
+  assert.equal(await page.locator(".cv-project").count(), 11);
+  for (const project of await page.locator(".cv-project").all()) {
+    if ((await project.locator("h4 a").count()) === 0) {
+      assert.equal(
+        await project.locator(".cv-confidential").innerText(),
+        "Confidential",
+      );
+    }
+  }
+
+  assert.equal(await page.locator("#about > .cv-entry").count(), 2);
+  assert.equal(await page.locator("#skills .cv-skills > div").count(), 5);
+  assert.equal(await page.locator("#honors .cv-records > li").count(), 7);
+  assert.equal(await page.locator("#activities .cv-records > li").count(), 4);
+  assert.equal(await page.locator("#languages .cv-skills > div").count(), 2);
+  assert.match(await page.locator("#experience").innerText(), /Aug 2026/);
+  assert.match(await page.locator("#experience").innerText(), /Jul 2024/);
+  assert.match(await page.locator("#experience").innerText(), /80%/);
+  assert.match(await page.locator("#experience").innerText(), /PIXTA Vietnam/);
+  assert.match(await page.locator("#references").innerText(), /Do Ba Lam/);
+  const resumeHref = await page.locator(".cv-actions a").getAttribute("href");
+  assert.equal(resumeHref, "/assets/resume.pdf?v=20261118");
+  const pdfResponse = await page.request.get(base + resumeHref);
+  assert.equal(pdfResponse.status(), 200);
+  assert.ok(
+    (await pdfResponse.body()).equals(
+      await readFile("public/assets/resume.pdf"),
+    ),
   );
   const nojs = await browser.newContext({
     javaScriptEnabled: false,
