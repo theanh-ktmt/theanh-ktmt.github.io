@@ -91,14 +91,10 @@ const schema = {
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <ol>
         <li>
-          <a href="/" target="_blank" rel="noopener noreferrer">
-            Home
-          </a>
+          <a href="/">Home</a>
         </li>
         <li>
-          <a href="/blogs.html" target="_blank" rel="noopener noreferrer">
-            Writing
-          </a>
+          <a href="/blogs.html">Writing</a>
         </li>
         <li aria-current="page">{title}</li>
       </ol>
@@ -106,25 +102,13 @@ const schema = {
     <header class="post-header">
       <div class="post-meta">
         {tags.map((tag: string) => (
-          <a
-            href={`/blogs.html?tag=${encodeURIComponent(tag)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {tag}
-          </a>
+          <a href={`/blogs.html?tag=${encodeURIComponent(tag)}`}>{tag}</a>
         ))}
       </div>
       <h1>{title}</h1>
       <p class="post-deck">{description}</p>
       <div class="byline">
-        <a
-          href="/experience.html#about"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          The Anh Tran
-        </a>
+        <a href="/experience.html#about">The Anh Tran</a>
         <span aria-hidden="true">/</span>
         <time datetime={date.toISOString()}>
           {date.toLocaleDateString("en-US", {

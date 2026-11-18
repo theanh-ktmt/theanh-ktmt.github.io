@@ -128,16 +128,10 @@ try {
   await page.locator("#blog-search").fill("no-such-post-928");
   assert.equal(await page.locator("#blog-empty").isVisible(), true);
   await page.locator("#blog-search").fill("");
-  const tagPopup = page.waitForEvent("popup");
   await page.locator('[data-tag="Site"]').click();
-  const taggedPage = await tagPopup;
-  await taggedPage.waitForLoadState();
-  assert.equal(
-    await taggedPage.locator("#blog-results [data-post]").count(),
-    1,
-  );
-  assert.ok(taggedPage.url().includes("tag=Site"));
-  await taggedPage.close();
+  assert.equal(await page.locator("#blog-results [data-post]").count(), 1);
+  assert.ok(page.url().includes("tag=Site"));
+  await page.locator('[data-tag=""]').click();
   await page.locator("#blog-sort").selectOption("oldest");
   assert.match(
     await page

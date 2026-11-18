@@ -10,10 +10,18 @@ export default function enrichContent() {
       node.children = node.children.map((child) => {
         visit(child);
         if (child.type !== "element") return child;
+        const link =
+          child.tagName === "a" && child.properties?.href
+            ? new URL(
+                String(child.properties.href),
+                "https://theanh-ktmt.github.io",
+              )
+            : null;
         if (
-          child.tagName === "a" &&
-          child.properties?.href &&
-          !String(child.properties.href).startsWith("#")
+          link &&
+          /^https?:$/.test(link.protocol) &&
+          (link.origin !== "https://theanh-ktmt.github.io" ||
+            link.pathname.toLowerCase().endsWith(".pdf"))
         ) {
           child.properties.target = "_blank";
           const rel = child.properties.rel || [];

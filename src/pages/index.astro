@@ -144,8 +144,6 @@ const schema = {
             <a
               class="affiliation affiliation-school"
               href="/experience.html#about"
-              target="_blank"
-              rel="noopener noreferrer"
             >
               <Image
                 src={hustLogo}
@@ -211,8 +209,8 @@ const schema = {
                 class="project-image-link"
                 href={p.href || "/contact.html"}
                 aria-label={p.href ? p.label : "Contact me about MB Chatbot"}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={p.href ? "_blank" : undefined}
+                rel={p.href ? "noopener noreferrer" : undefined}
               >
                 <Image
                   src={p.image}

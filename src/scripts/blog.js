@@ -74,10 +74,9 @@ if (archive) {
     function link(n, label, rel) {
       const a = document.createElement("a");
       a.href = urlFor(n);
-      a.target = "_blank";
       a.textContent = label;
       if (n === page && !rel) a.setAttribute("aria-current", "page");
-      a.rel = [rel, "noopener", "noreferrer"].filter(Boolean).join(" ");
+      if (rel) a.rel = rel;
       pager.append(a);
     }
     if (page > 1) link(page - 1, "← Previous", "prev");
@@ -91,6 +90,14 @@ if (archive) {
     e.preventDefault();
     render(true);
   });
+  document.querySelectorAll("[data-tag]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      tag = a.dataset.tag;
+      render(true);
+    }),
+  );
   window.addEventListener("popstate", () => render());
   render();
 }
